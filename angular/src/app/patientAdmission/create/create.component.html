@@ -1,0 +1,131 @@
+<form class="form-horizontal" autocomplete="off" #createAdmissionForm="ngForm" (ngSubmit)="save()">
+
+    <!-- Modal Header -->
+    <abp-modal-header [title]="'CreatePatientAdmission' | localize" (onCloseClick)="bsModalRef.hide()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+
+        <!-- Admission Date -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="admissionDate">
+                {{ 'AdmissionDate' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="date" class="form-control" name="admissionDate" id="admissionDate" required
+                    [(ngModel)]="admission.admissionDate" #admissionDateModel="ngModel" #admissionDateEl />
+
+                <small class="text-danger" *ngIf="admissionDateModel.touched && admissionDateModel.invalid">
+                    <span *ngIf="admissionDateModel.errors?.required">Admission Date is required</span>
+                </small>
+
+                <abp-validation-summary [control]="admissionDateModel"
+                    [controlEl]="admissionDateEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Discharge Date -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="dischargeDate">
+                {{ 'DischargeDate' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="date" class="form-control" name="dischargeDate" id="dischargeDate"
+                    [(ngModel)]="admission.dischargeDate" #dischargeDateModel="ngModel" #dischargeDateEl />
+
+                <abp-validation-summary [control]="dischargeDateModel"
+                    [controlEl]="dischargeDateEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Diagnosis -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="diagnosis">
+                {{ 'Diagnosis' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="diagnosis" id="diagnosis" required minlength="2"
+                    maxlength="500" [(ngModel)]="admission.diagnosis" #diagnosisModel="ngModel" #diagnosisEl />
+
+                <small class="text-danger" *ngIf="diagnosisModel.touched && diagnosisModel.invalid">
+                    <span *ngIf="diagnosisModel.errors?.required">Diagnosis is required</span>
+                    <span *ngIf="diagnosisModel.errors?.minlength">Must be at least 2 characters</span>
+                    <span *ngIf="diagnosisModel.errors?.maxlength">Cannot exceed 500 characters</span>
+                </small>
+
+                <abp-validation-summary [control]="diagnosisModel" [controlEl]="diagnosisEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="status">
+                {{ 'Status' | localize }}
+            </label>
+            <div class="col-md-9">
+                <select class="form-control" name="status" id="status" required [(ngModel)]="admission.status"
+                    #statusModel="ngModel" #statusEl>
+                    <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+                </select>
+
+                <abp-validation-summary [control]="statusModel" [controlEl]="statusEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Patient -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="patient">
+                {{ 'Patient' | localize }}
+            </label>
+            <div class="col-md-9">
+                <select class="form-control" name="patient" id="patient" required [(ngModel)]="admission.patientId"
+                    #patientModel="ngModel" #patientEl>
+                    <option *ngFor="let p of patients" [ngValue]="p.id">
+                        {{ p.firstName }} {{ p.lastName }}
+                    </option>
+
+
+                </select>
+
+                <abp-validation-summary [control]="patientModel" [controlEl]="patientEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Doctor -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="doctor">
+                {{ 'Doctor' | localize }}
+            </label>
+            <div class="col-md-9">
+                <select class="form-control" name="doctor" id="doctor" required [(ngModel)]="admission.doctorId"
+                    #doctorModel="ngModel" #doctorEl>
+                    <option *ngFor="let d of doctors" [value]="d.id">{{ d.fullName }}</option>
+                </select>
+
+                <abp-validation-summary [control]="doctorModel" [controlEl]="doctorEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Bed -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="bed">
+                {{ 'Bed' | localize }}
+            </label>
+            <div class="col-md-9">
+                <select class="form-control" name="bed" id="bed" required [(ngModel)]="admission.bedId"
+                    #bedModel="ngModel" #bedEl>
+                    <option *ngFor="let b of beds" [value]="b.id">{{ b.bedNumber }}</option>
+                </select>
+
+                <abp-validation-summary [control]="bedModel" [controlEl]="bedEl"></abp-validation-summary>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createAdmissionForm.form.valid || saving"
+        (onCancelClick)="bsModalRef.hide()">
+    </abp-modal-footer>
+
+</form>

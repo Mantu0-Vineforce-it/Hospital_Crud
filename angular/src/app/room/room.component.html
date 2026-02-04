@@ -1,0 +1,135 @@
+<div [@routerTransition]>
+
+    <!-- ===== Header ===== -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h1>{{ 'Rooms' | localize }}</h1>
+                </div>
+                <div class="col-6 text-right">
+                    <button class="btn bg-blue" (click)=createRoom()>
+                        <i class="fa fa-plus-square mr-1"></i>
+                        {{ 'CreateRoom' | localize }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Content ===== -->
+    <section class="content px-2 pb-5">
+        <div class="container-fluid">
+            <div class="card mb-0 table-wrapper">
+
+                <!-- 🔍 Search -->
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button class="btn bg-blue" (click)="list()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control" [(ngModel)]="keyword"
+                                    [placeholder]="'SearchWithThreeDot' | localize" (keyup.enter)="list()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 📋 Table -->
+                <div class="card-body">
+                    <div class="table-responsive">
+
+                        <p-table #dataTable class="rooms-table" [value]="primengTableHelper.records" [lazy]="true"
+                            (onLazyLoad)="list($event)" [paginator]="false"
+                            [rows]="primengTableHelper.defaultRecordsCountPerPage"
+                            [tableStyle]="{ 'min-width': '60rem' }">
+
+                            <!-- Header -->
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pSortableColumn="name">
+                                        {{ 'RoomName' | localize }}
+                                        <p-sortIcon field="name"></p-sortIcon>
+                                    </th>
+
+                                    <th pSortableColumn="type">
+                                        {{ 'RoomType' | localize }}
+                                        <p-sortIcon field="type"></p-sortIcon>
+                                    </th>
+
+                                    <th pSortableColumn="capacity">
+                                        {{ 'Capacity' | localize }}
+                                        <p-sortIcon field="capacity"></p-sortIcon>
+                                    </th>
+
+                                    <th pSortableColumn="isAvailable">
+                                        {{ 'Available' | localize }}
+                                        <p-sortIcon field="isAvailable"></p-sortIcon>
+                                    </th>
+
+                                    <th style="width: 160px">
+                                        {{ 'Actions' | localize }}
+                                    </th>
+                                </tr>
+                            </ng-template>
+
+                            <!-- Body -->
+                            <ng-template pTemplate="body" let-room>
+                                <tr>
+                                    <td>{{ room.roomNumber}}</td>
+                                    <td>{{ room.roomType}}</td> <!-- If enum, you might want a pipe to show text -->
+                                    <td>{{ room.totalBeds}}</td>
+                                    <td>
+                                        <span [ngClass]="room.isActive ? 'text-success' : 'text-danger'">
+                                            {{ room.isActive ? ('Yes' | localize) : ('No' | localize) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-inline-flex align-items-center gap-2 justify-content-between">
+                                            <button type="button"
+                                                class="btn btn-sm bg-secondary d-inline-flex align-items-center px-2"
+                                                (click)="editRoom(room)">
+                                                <i class="fas fa-pencil-alt mr-1"></i>
+                                                {{ 'Edit' | localize }}
+                                            </button>
+
+                                            <button type="button"
+                                                class="btn btn-sm btn-danger d-inline-flex align-items-center px-2"
+                                                (click)="delete(room)">
+                                                <i class="fas fa-trash mr-1"></i>
+                                                {{ 'Delete' | localize }}
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+
+                        </p-table>
+
+                        <!-- ❌ No Data -->
+                        <div class="primeng-no-data text-center mt-3" *ngIf="primengTableHelper.records?.length === 0">
+                            {{ 'NoData' | localize }}
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 📑 Pagination -->
+                <div class="card-footer bg-white border-top">
+                    <p-paginator #paginator [rows]="primengTableHelper.defaultRecordsCountPerPage"
+                        [totalRecords]="primengTableHelper.totalRecordsCount"
+                        [rowsPerPageOptions]="primengTableHelper.predefinedRecordsCountPerPage"
+                        (onPageChange)="list($event)">
+                    </p-paginator>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,129 @@
+<form class="form-horizontal" autocomplete="off" #createDoctorForm="ngForm" (ngSubmit)="save()">
+
+    <!-- Modal Header -->
+    <abp-modal-header [title]="'CreateDoctor' | localize" (onCloseClick)="bsModalRef.hide()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+
+        <!-- Doctor Code -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="doctorCode">
+                {{ 'DoctorCode' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="doctorCode" id="doctorCode" required
+                    [(ngModel)]="doctor.docterCode" #codeModel="ngModel" #codeEl />
+
+                <small class="text-danger" *ngIf="codeModel.touched && codeModel.invalid">
+                    <span *ngIf="codeModel.errors?.required">Doctor Code is required</span>
+                </small>
+
+                <abp-validation-summary [control]="codeModel" [controlEl]="codeEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Full Name -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="fullName">
+                {{ 'FullName' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="fullName" id="fullName" required minlength="2"
+                    maxlength="100" [(ngModel)]="doctor.fullName" #fullNameModel="ngModel" #fullNameEl />
+
+                <small class="text-danger" *ngIf="fullNameModel.touched && fullNameModel.invalid">
+                    <span *ngIf="fullNameModel.errors?.required">Full Name is required</span>
+                    <span *ngIf="fullNameModel.errors?.minlength">Must be at least 2 characters</span>
+                    <span *ngIf="fullNameModel.errors?.maxlength">Cannot exceed 100 characters</span>
+                </small>
+
+                <abp-validation-summary [control]="fullNameModel" [controlEl]="fullNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Specialization -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="specialization">
+                {{ 'Specialization' | localize }}
+            </label>
+            <div class="col-md-9">
+                <select class="form-control" name="specialization" id="specialization" required
+                        [(ngModel)]="doctor.specialization" #specializationModel="ngModel" #specializationEl>
+                    <option *ngFor="let s of specializationOptions" [value]="s">{{ s }}</option>
+                </select>
+
+                <abp-validation-summary [control]="specializationModel" [controlEl]="specializationEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Qualification -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="qualification">
+                {{ 'Qualification' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="qualification" id="qualification"
+                       [(ngModel)]="doctor.qualification" #qualificationModel="ngModel" #qualificationEl />
+
+                <abp-validation-summary [control]="qualificationModel" [controlEl]="qualificationEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="phoneNumber">
+                {{ 'PhoneNumber' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="phoneNumber" id="phoneNumber"
+                       [(ngModel)]="doctor.phoneNumber" #phoneModel="ngModel" #phoneEl />
+
+                <abp-validation-summary [control]="phoneModel" [controlEl]="phoneEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="email">
+                {{ 'Email' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="email" class="form-control" name="email" id="email" required
+                       [(ngModel)]="doctor.email" #emailModel="ngModel" #emailEl />
+
+                <small class="text-danger" *ngIf="emailModel.touched && emailModel.invalid">
+                    <span *ngIf="emailModel.errors?.required">Email is required</span>
+                    <span *ngIf="emailModel.errors?.email">Invalid email format</span>
+                </small>
+
+                <abp-validation-summary [control]="emailModel" [controlEl]="emailEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="form-group row">
+    <label class="col-md-3 col-form-label" for="isAvailable">
+        {{ 'IsAvailable' | localize }}
+    </label>
+    <div class="col-md-9">
+        <input type="checkbox" name="isAvailable" id="isAvailable"
+               [(ngModel)]="doctor.isAvailble" #isAvailableModel="ngModel" #isAvailableEl />
+    </div>
+</div>
+
+
+    </div>
+
+    <!-- Modal Footer -->
+    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createDoctorForm.form.valid || saving"
+                      (onCancelClick)="bsModalRef.hide()">
+    </abp-modal-footer>
+
+</form>

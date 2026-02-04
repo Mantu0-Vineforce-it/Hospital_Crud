@@ -1,0 +1,107 @@
+<form class="form-horizontal" autocomplete="off" #editDoctorForm="ngForm" (ngSubmit)="update()">
+
+  <!-- Modal Header -->
+  <abp-modal-header [title]="'EditDoctor' | localize" (onCloseClick)="bsModalRef.hide()">
+  </abp-modal-header>
+
+  <!-- Modal Body -->
+  <div class="modal-body">
+
+    <!-- Doctor Code (Read-only) -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">{{ 'DoctorCode' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="doctorCode" [(ngModel)]="doctor.docterCode" readonly />
+      </div>
+    </div>
+
+    <!-- Full Name -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label">{{ 'FullName' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="fullName" required minlength="3" maxlength="100"
+               [(ngModel)]="doctor.fullName" #fullNameModel="ngModel" />
+        <small class="text-danger" *ngIf="fullNameModel.touched && fullNameModel.invalid">
+          <span *ngIf="fullNameModel.errors?.required">Full Name is required</span>
+          <span *ngIf="fullNameModel.errors?.minlength">Must be at least 3 characters</span>
+          <span *ngIf="fullNameModel.errors?.maxlength">Cannot exceed 100 characters</span>
+        </small>
+      </div>
+    </div>
+
+    <!-- Specialization -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="specialization">
+        {{ 'Specialization' | localize }}
+      </label>
+      <div class="col-md-9">
+        <select class="form-control" name="specialization" id="specialization" required
+                [(ngModel)]="doctor.specialization"
+                #specializationModel="ngModel" #specializationEl>
+
+          <option *ngFor="let s of doctorSpecializationOptions" [ngValue]="s.value">
+            {{ s.label }}
+          </option>
+
+        </select>
+
+        <!-- Include only if AbpValidationSummaryComponent is imported -->
+        <abp-validation-summary [control]="specializationModel" [controlEl]="specializationEl">
+        </abp-validation-summary>
+      </div>
+    </div>
+
+    <!-- Qualification -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">{{ 'Qualification' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="qualification" [(ngModel)]="doctor.qualification" />
+      </div>
+    </div>
+
+    <!-- Phone Number -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">{{ 'PhoneNumber' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="phoneNumber" [(ngModel)]="doctor.phoneNumber" />
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label">{{ 'Email' | localize }}</label>
+      <div class="col-md-9">
+        <input type="email" class="form-control" name="email" required
+               pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" [(ngModel)]="doctor.email"
+               #emailModel="ngModel" />
+        <small class="text-danger" *ngIf="emailModel.touched && emailModel.invalid">
+          <span *ngIf="emailModel.errors?.required">Email is required</span>
+          <span *ngIf="emailModel.errors?.pattern">Invalid email format</span>
+        </small>
+      </div>
+    </div>
+
+    <!-- Availability -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">{{ 'IsAvailable' | localize }}</label>
+      <div class="col-md-9">
+        <div class="form-check mt-2">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="doctor.isAvailble" name="isAvailble"
+                 id="isAvailble" />
+          <label class="form-check-label" for="isAvailble">Available</label>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End modal-body -->
+
+  <!-- Modal Footer (inside form to enable submit) -->
+  <abp-modal-footer [cancelDisabled]="saving"
+                    [saveDisabled]="!editDoctorForm.form.valid || saving"
+                    (onCancelClick)="bsModalRef.hide()">
+    <button type="submit" class="btn btn-primary" [disabled]="!editDoctorForm.form.valid || saving">
+      {{ 'Save' | localize }}
+    </button>
+  </abp-modal-footer>
+
+</form>

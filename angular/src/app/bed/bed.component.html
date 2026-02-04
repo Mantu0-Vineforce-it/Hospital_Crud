@@ -1,0 +1,128 @@
+<div [@routerTransition]>
+
+    <!-- ===== Header ===== -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <h1>{{ 'Beds' | localize }}</h1>
+                </div>
+                <div class="col-6 text-right">
+                    <button class="btn bg-blue" (click)="createBed()">
+                        <i class="fa fa-plus-square mr-1"></i>
+                        {{ 'CreateBed' | localize }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Content ===== -->
+    <section class="content px-2 pb-5">
+        <div class="container-fluid">
+            <div class="card mb-0 table-wrapper">
+
+                <!-- 🔍 Search -->
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button class="btn bg-blue" (click)="list()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control" [(ngModel)]="keyword"
+                                    [placeholder]="'SearchWithThreeDot' | localize" (keyup.enter)="list()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 📋 Table -->
+                <div class="card-body">
+                    <div class="table-responsive">
+
+                        <p-table #dataTable class="beds-table" [value]="primengTableHelper.records" [lazy]="true"
+                            (onLazyLoad)="list($event)" [paginator]="false"
+                            [rows]="primengTableHelper.defaultRecordsCountPerPage"
+                            [tableStyle]="{ 'min-width': '60rem' }">
+
+                            <!-- Header -->
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pSortableColumn="bedNumber">
+                                        {{ 'BedNumber' | localize }}
+                                        <p-sortIcon field="bedNumber"></p-sortIcon>
+                                    </th>
+
+                                    <th pSortableColumn="isOccupied">
+                                        {{ 'Occupied' | localize }}
+                                        <p-sortIcon field="isOccupied"></p-sortIcon>
+                                    </th>
+
+                                    <th pSortableColumn="roomId">
+                                        {{ 'Room' | localize }}
+                                        <p-sortIcon field="roomId"></p-sortIcon>
+                                    </th>
+
+                                    <th style="width: 160px">
+                                        {{ 'Actions' | localize }}
+                                    </th>
+                                </tr>
+                            </ng-template>
+
+                            <!-- Body -->
+                            <ng-template pTemplate="body" let-bed>
+                                <tr>
+                                    <td>{{ bed.bedNumber }}</td>
+                                    <td>
+                                        <span [ngClass]="bed.isOccupied ? 'text-success' : 'text-danger'">
+                                            {{ bed.isOccupied ? ('Yes' | localize) : ('No' | localize) }}
+                                        </span>
+                                    </td>
+                                    <td>{{ bed.roomId }}</td>
+                                    <td>
+                                        <div class="d-inline-flex align-items-center gap-2 justify-content-between">
+                                            <button type="button"
+                                                class="btn btn-sm bg-secondary d-inline-flex align-items-center px-2"
+                                                (click)="editBed(bed)">
+                                                <i class="fas fa-pencil-alt mr-1"></i>
+                                                {{ 'Edit' | localize }}
+                                            </button>
+
+                                            <button type="button"
+                                                class="btn btn-sm btn-danger d-inline-flex align-items-center px-2"
+                                                (click)="delete(bed)">
+                                                <i class="fas fa-trash mr-1"></i>
+                                                {{ 'Delete' | localize }}
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+
+                        <!-- ❌ No Data -->
+                        <div class="primeng-no-data text-center mt-3" *ngIf="primengTableHelper.records?.length === 0">
+                            {{ 'NoData' | localize }}
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 📑 Pagination -->
+                <div class="card-footer bg-white border-top">
+                    <p-paginator #paginator [rows]="primengTableHelper.defaultRecordsCountPerPage"
+                        [totalRecords]="primengTableHelper.totalRecordsCount"
+                        [rowsPerPageOptions]="primengTableHelper.predefinedRecordsCountPerPage"
+                        (onPageChange)="list($event)">
+                    </p-paginator>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>

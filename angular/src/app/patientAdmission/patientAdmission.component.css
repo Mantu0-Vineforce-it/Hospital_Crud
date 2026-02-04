@@ -1,0 +1,116 @@
+/* =====================================================
+   STUDENTS TABLE – UNIQUE COLUMN STYLE (PrimeNG)
+   ===================================================== */
+
+/* Scope styles only to student table */
+.students-table {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Table layout */
+.students-table .p-datatable-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+/* ================= HEADER ================= */
+.students-table thead th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  color: #343a40;
+  padding: 12px 14px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* ================= BODY CELLS ================= */
+.students-table tbody td {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #495057;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* ================= ALTERNATE COLUMN COLORS ================= */
+
+/* Column 1 – Name */
+.students-table thead th:nth-child(1),
+.students-table tbody td:nth-child(1) {
+  background-color: #f0f7ff;
+}
+
+/* Column 2 – Email */
+.students-table thead th:nth-child(2),
+.students-table tbody td:nth-child(2) {
+  background-color: #fff7e6;
+}
+
+/* Column 3 – Age */
+.students-table thead th:nth-child(3),
+.students-table tbody td:nth-child(3) {
+  background-color: #f6ffed;
+}
+
+/* Column 4 – College */
+.students-table thead th:nth-child(4),
+.students-table tbody td:nth-child(4) {
+  background-color: #fff0f6;
+}
+
+/* Column 5 – Actions */
+.students-table thead th:nth-child(5),
+.students-table tbody td:nth-child(5) {
+  background-color: #f8f9fa;
+}
+
+/* ================= COLUMN SEPARATORS ================= */
+.students-table th,
+.students-table td {
+  border-right: 1px solid #dee2e6;
+}
+
+.students-table th:last-child,
+.students-table td:last-child {
+  border-right: none;
+}
+
+/* ================= ROW HOVER ================= */
+.students-table tbody tr:hover td {
+  background-color: #e9f3ff !important;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* ================= SORT ICON COLOR ================= */
+.students-table .p-sortable-column-icon {
+  color: #0d6efd;
+}
+
+/* ================= BUTTON ALIGNMENT ================= */
+.students-table .btn {
+  white-space: nowrap;
+}
+
+/* ================= NO DATA MESSAGE ================= */
+.primeng-no-data {
+  padding: 20px;
+  font-size: 15px;
+  color: #6c757d;
+}
+
+/* ================= PAGINATOR ================= */
+.p-paginator {
+  border-top: 1px solid #dee2e6;
+  padding-top: 10px;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .students-table thead th,
+  .students-table tbody td {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
