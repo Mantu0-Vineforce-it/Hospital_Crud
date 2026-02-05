@@ -1,14 +1,18 @@
 ﻿using Abp.Application.Services;
 using Abp.Domain.Repositories;
+using Abp.Runtime.Validation;
+using Abp.UI;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using UserCrud.Roles.Dto;
 using UserCrud.Rooms.Dto;
 
 namespace UserCrud.Rooms
 {
-    public class RoomDtoService : ApplicationService, IRoomDtoApplicationModule
+    public class RoomDtoService : ApplicationService
     {
         private readonly IRepository<room, long> _roomRepository;
 
@@ -17,10 +21,11 @@ namespace UserCrud.Rooms
             _roomRepository = roomRepository;
         }
 
-        // Get all rooms
+        // ===================== GET ALL =====================
         public async Task<List<RoomDto>> GetAllRoomsAsync()
         {
             var rooms = await _roomRepository.GetAllListAsync();
+
             return rooms.Select(r => new RoomDto
             {
                 Id = r.Id,
@@ -31,14 +36,12 @@ namespace UserCrud.Rooms
             }).ToList();
         }
 
-        // Get room by ID
+        // ===================== GET BY ID =====================
         public async Task<RoomDto> GetRoomByIdAsync(long id)
         {
             var room = await _roomRepository.FirstOrDefaultAsync(r => r.Id == id);
             if (room == null)
-            {
-                throw new Exception($"Room with id {id} not found.");
-            }
+                throw new UserFriendlyException($"Room with id {id} not found.");
 
             return new RoomDto
             {
@@ -50,63 +53,109 @@ namespace UserCrud.Rooms
             };
         }
 
-        // Create a new room
+        // ===================== CREATE =====================
         public async Task<RoomDto> CreateRoomAsync(createRoomDto input)
         {
-            var room = new room
+            try
             {
-                RoomNumber = input.RoomNumber,
-                RoomType = input.RoomType,
-                TotalBeds = input.TotalBeds,
-                IsActive = input.IsActive
-            };
+                var validationErrors = new List<ValidationResult>();
 
-            var createdRoom = await _roomRepository.InsertAsync(room);
+                // Check RoomNumber duplicate
+                if (await _roomRepository.FirstOrDefaultAsync(r => r.RoomNumber == input.RoomNumber) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"RoomNumber '{input.RoomNumber}' is already in use.",
+                        new[] { "RoomNumber" }));
+                }
 
-            return new RoomDto
+                if (validationErrors.Any())
+                    throw new AbpValidationException("Validation failed", validationErrors);
+
+                var room = new room
+                {
+                    RoomNumber = input.RoomNumber,
+                    RoomType = input.RoomType,
+                    TotalBeds = input.TotalBeds,
+                    IsActive = input.IsActive
+                };
+
+                var createdRoom = await _roomRepository.InsertAsync(room);
+
+                return new RoomDto
+                {
+                    Id = createdRoom.Id,
+                    RoomNumber = createdRoom.RoomNumber,
+                    RoomType = createdRoom.RoomType,
+                    TotalBeds = createdRoom.TotalBeds,
+                    IsActive = createdRoom.IsActive
+                };
+            }
+            catch (AbpValidationException)
             {
-                Id = createdRoom.Id,
-                RoomNumber = createdRoom.RoomNumber,
-                RoomType = createdRoom.RoomType,
-                TotalBeds = createdRoom.TotalBeds,
-                IsActive = createdRoom.IsActive
-            };
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("An unexpected error occurred while creating the room.", ex);
+            }
         }
 
-        // Update an existing room
+        // ===================== UPDATE =====================
         public async Task<RoomDto> UpdateRoomAsync(updateRoomDto input)
         {
-            var room = await _roomRepository.FirstOrDefaultAsync(r => r.Id == input.Id);
-            if (room == null)
+            try
             {
-                throw new Exception($"Room with id {input.Id} not found.");
+                var room = await _roomRepository.FirstOrDefaultAsync(r => r.Id == input.Id);
+                if (room == null)
+                    throw new UserFriendlyException($"Room with id {input.Id} not found.");
+
+                var validationErrors = new List<ValidationResult>();
+
+                // RoomNumber duplicate (exclude current room)
+                if (await _roomRepository.FirstOrDefaultAsync(
+                        r => r.RoomNumber == input.RoomNumber && r.Id != input.Id) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"RoomNumber '{input.RoomNumber}' is already in use.",
+                        new[] { "RoomNumber" }));
+                }
+
+                if (validationErrors.Any())
+                    throw new AbpValidationException("Validation failed", validationErrors);
+
+                // Update room fields
+                room.RoomNumber = input.RoomNumber;
+                room.RoomType = input.RoomType;
+                room.TotalBeds = input.TotalBeds;
+                room.IsActive = input.IsActive;
+
+                await _roomRepository.UpdateAsync(room);
+
+                return new RoomDto
+                {
+                    Id = room.Id,
+                    RoomNumber = room.RoomNumber,
+                    RoomType = room.RoomType,
+                    TotalBeds = room.TotalBeds,
+                    IsActive = room.IsActive
+                };
             }
-
-            room.RoomNumber = input.RoomNumber;
-            room.RoomType = input.RoomType;
-            room.TotalBeds = input.TotalBeds;
-            room.IsActive = input.IsActive;
-
-            await _roomRepository.UpdateAsync(room);
-
-            return new RoomDto
+            catch (AbpValidationException)
             {
-                Id = room.Id,
-                RoomNumber = room.RoomNumber,
-                RoomType = room.RoomType,
-                TotalBeds = room.TotalBeds,
-                IsActive = room.IsActive
-            };
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("An error occurred while updating the room. Please try again.", ex);
+            }
         }
 
-        // Delete a room
+        // ===================== DELETE =====================
         public async Task DeleteRoomAsync(long id)
         {
             var room = await _roomRepository.FirstOrDefaultAsync(r => r.Id == id);
             if (room == null)
-            {
-                throw new Exception($"Room with id {id} not found.");
-            }
+                throw new UserFriendlyException($"Room with id {id} not found.");
 
             await _roomRepository.DeleteAsync(room);
         }

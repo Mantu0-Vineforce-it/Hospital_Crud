@@ -135,37 +135,84 @@ namespace UserCrud.Docters
                 throw new UserFriendlyException("An unexpected error occurred while creating the doctor.", ex);
             }
         }
-        // Update an existing doctor
         public async Task<DocterDto> UpdateDoctorAsync(UpdateDocterDto input)
         {
-            var doctor = await _doctorRepository.FirstOrDefaultAsync(d => d.Id == input.Id);
-            if (doctor == null)
+            try
             {
-                throw new Exception($"Doctor with id {input.Id} not found.");
+                var doctor = await _doctorRepository.FirstOrDefaultAsync(d => d.Id == input.Id);
+                if (doctor == null)
+                {
+                    throw new UserFriendlyException($"Doctor with Id '{input.Id}' not found.");
+                }
+
+                var validationErrors = new List<ValidationResult>();
+
+                // Check DoctorCode duplicate (excluding current doctor)
+                if (await _doctorRepository.FirstOrDefaultAsync(d => d.DocterCode == input.DocterCode && d.Id != input.Id) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"DoctorCode '{input.DocterCode}' is already in use.",
+                        new[] { "DoctorCode" }));
+                }
+
+                // Check Email duplicate (excluding current doctor)
+                if (await _doctorRepository.FirstOrDefaultAsync(d => d.Email == input.Email && d.Id != input.Id) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"Email '{input.Email}' is already in use.",
+                        new[] { "Email" }));
+                }
+
+                // Check PhoneNumber duplicate (excluding current doctor)
+                if (await _doctorRepository.FirstOrDefaultAsync(d => d.PhoneNumber == input.PhoneNumber && d.Id != input.Id) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"Phone number '{input.PhoneNumber}' is already in use.",
+                        new[] { "PhoneNumber" }));
+                }
+
+                // If any validation errors exist, throw
+                if (validationErrors.Any())
+                {
+                    throw new AbpValidationException("Validation failed", validationErrors);
+                }
+
+                // Update doctor entity
+                doctor.DocterCode = input.DocterCode;
+                doctor.FullName = input.FullName;
+                doctor.Specialization = input.Specialization;
+                doctor.Qualification = input.Qualification;
+                doctor.PhoneNumber = input.PhoneNumber;
+                doctor.Email = input.Email;
+                doctor.IsAvailble = input.IsAvailble;
+
+                await _doctorRepository.UpdateAsync(doctor);
+
+                // Return updated DTO
+                return new DocterDto
+                {
+                    Id = doctor.Id,
+                    DocterCode = doctor.DocterCode,
+                    FullName = doctor.FullName,
+                    Specialization = doctor.Specialization,
+                    Qualification = doctor.Qualification,
+                    PhoneNumber = doctor.PhoneNumber,
+                    Email = doctor.Email,
+                    IsAvailble = doctor.IsAvailble
+                };
             }
-
-            doctor.DocterCode = input.DocterCode;
-            doctor.FullName = input.FullName;
-            doctor.Specialization = input.Specialization;
-            doctor.Qualification = input.Qualification;
-            doctor.PhoneNumber = input.PhoneNumber;
-            doctor.Email = input.Email;
-            doctor.IsAvailble = input.IsAvailble;
-
-            await _doctorRepository.UpdateAsync(doctor);
-
-            return new DocterDto
+            catch (AbpValidationException)
             {
-                Id = doctor.Id,
-                DocterCode = doctor.DocterCode,
-                FullName = doctor.FullName,
-                Specialization = doctor.Specialization,
-                Qualification = doctor.Qualification,
-                PhoneNumber = doctor.PhoneNumber,
-                Email = doctor.Email,
-                IsAvailble = doctor.IsAvailble
-            };
+                // Re-throw known validation exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Wrap unexpected exceptions
+                throw new UserFriendlyException("An unexpected error occurred while updating the doctor.", ex);
+            }
         }
+
 
         // Delete a doctor
         public async Task DeleteDoctorAsync(long id)

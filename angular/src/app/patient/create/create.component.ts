@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import moment from 'moment';
+import { finalize } from 'rxjs/operators';
 
 import { AppComponentBase } from '../../../shared/app-component-base';
 import {
@@ -35,15 +36,15 @@ import { LocalizePipe } from '../../../shared/pipes/localize.pipe';
     LocalizePipe,
   ],
 })
-export class CreatePatientDialogComponent
-  extends AppComponentBase
-  implements OnInit {
-
+export class CreatePatientDialogComponent extends AppComponentBase implements OnInit {
   saving = false;
   patient: PatientDto = new PatientDto();
   genderOptions: string[] = ['Male', 'Female', 'Other'];
-
   selectedFile: File | null = null;
+  photoPreview: string | ArrayBuffer | null = null;
+
+  // Field-specific backend errors
+  formErrors: { patientCode?: string; email?: string; phoneNumber?: string; general?: string } = {};
 
   @Output() onSave = new EventEmitter<any>();
 
@@ -58,32 +59,27 @@ export class CreatePatientDialogComponent
 
   ngOnInit(): void {}
 
-onFileSelected(event: any) {
-  if (event.target.files && event.target.files.length > 0) {
-    this.selectedFile = event.target.files[0];
+  onFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.photoPreview = reader.result;
-    };
-    reader.readAsDataURL(this.selectedFile);
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.photoPreview = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
-}
-
-photoPreview: string | ArrayBuffer | null = null;
-
 
   save(): void {
     this.saving = true;
+    this.formErrors = {}; // reset errors
 
     const dto = new CreatePatientDto();
     dto.patientCode = this.patient.patientCode;
     dto.firstName = this.patient.firstName;
     dto.lastName = this.patient.lastName;
-
-    // ✅ FIX: use moment
     dto.dateOfBirth = moment(this.patient.dateOfBirth);
-
     dto.gender = this.patient.gender;
     dto.phoneNumber = this.patient.phoneNumber;
     dto.email = this.patient.email;
@@ -101,18 +97,49 @@ photoPreview: string | ArrayBuffer | null = null;
     }
   }
 
-  // ✅ FIX: add missing method
   sendPatient(dto: CreatePatientDto): void {
-    this._patientService.createPatient(dto).subscribe(
-      () => {
-        this.notify.info(this.l('SavedSuccessfully'));
-        this.bsModalRef.hide();
-        this.onSave.emit(null);
-      },
-      () => {
+    this._patientService.createPatient(dto)
+      .pipe(finalize(() => {
         this.saving = false;
         this.cd.detectChanges();
-      }
-    );
+      }))
+      .subscribe({
+        next: () => {
+          this.notify.info(this.l('SavedSuccessfully'));
+          this.bsModalRef.hide();
+          this.onSave.emit(null);
+        },
+        error: (err) => {
+          this.formErrors = {}; // reset errors
+
+          // Map backend validation errors
+          if (err?.error?.details) {
+            if (err.error.details.PatientCode) {
+              this.formErrors.patientCode = err.error.details.PatientCode[0];
+            }
+            if (err.error.details.Email) {
+              this.formErrors.email = err.error.details.Email[0];
+            }
+            if (err.error.details.PhoneNumber) {
+              this.formErrors.phoneNumber = err.error.details.PhoneNumber[0];
+            }
+          }
+
+          // Fallback for general messages
+          if (!this.formErrors.patientCode && err.error?.message?.toLowerCase().includes('patient code')) {
+            this.formErrors.patientCode = err.error.message;
+          }
+          if (!this.formErrors.email && err.error?.message?.toLowerCase().includes('email')) {
+            this.formErrors.email = err.error.message;
+          }
+          if (!this.formErrors.phoneNumber && err.error?.message?.toLowerCase().includes('phone')) {
+            this.formErrors.phoneNumber = err.error.message;
+          }
+
+          if (!this.formErrors.patientCode && !this.formErrors.email && !this.formErrors.phoneNumber) {
+            this.formErrors.general = err.error?.message || 'Save failed';
+          }
+        },
+      });
   }
 }

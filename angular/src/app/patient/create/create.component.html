@@ -1,169 +1,151 @@
 <form class="form-horizontal" autocomplete="off" #createPatientForm="ngForm" (ngSubmit)="save()">
 
-    <!-- Modal Header -->
-    <abp-modal-header [title]="'CreatePatient' | localize" (onCloseClick)="bsModalRef.hide()">
-    </abp-modal-header>
+  <!-- Modal Header -->
+  <abp-modal-header [title]="'CreatePatient' | localize" (onCloseClick)="bsModalRef.hide()">
+  </abp-modal-header>
 
-    <div class="modal-body">
+  <div class="modal-body">
 
-        <!-- Patient Code -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="patientCode">
-                {{ 'PatientCode' | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="text" class="form-control" name="patientCode" id="patientCode" required
-                    [(ngModel)]="patient.patientCode" #codeModel="ngModel" #codeEl />
+    <!-- Patient Code -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="patientCode">{{ 'PatientCode' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="patientCode" id="patientCode" required
+               [(ngModel)]="patient.patientCode" #codeModel="ngModel" #codeEl />
 
-                <!-- <small class="text-danger" *ngIf="codeModel.touched && codeModel.invalid">
-                    <span *ngIf="codeModel.errors?.required">Patient Code is required</span>
-                </small> -->
+        <small class="text-danger" *ngIf="codeModel.touched && codeModel.invalid">
+          <span *ngIf="codeModel.errors?.required">Patient Code is required</span>
+        </small>
 
-                <!-- <abp-validation-summary [control]="codeModel" [controlEl]="codeEl">
-                </abp-validation-summary> -->
-            </div>
-        </div>
+        <abp-validation-summary [control]="codeModel" [controlEl]="codeEl"></abp-validation-summary>
 
-        <!-- First Name -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="firstName">
-                {{ 'FirstName' | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="text" class="form-control" name="firstName" id="firstName" required minlength="2"
-                    maxlength="50" [(ngModel)]="patient.firstName" #firstNameModel="ngModel" #firstNameEl />
-
-                <small class="text-danger" *ngIf="firstNameModel.touched && firstNameModel.invalid">
-                    <span *ngIf="firstNameModel.errors?.required">First Name is required</span>
-                    <span *ngIf="firstNameModel.errors?.minlength">Must be at least 2 characters</span>
-                    <span *ngIf="firstNameModel.errors?.maxlength">Cannot exceed 50 characters</span>
-                </small>
-
-                <abp-validation-summary [control]="firstNameModel" [controlEl]="firstNameEl">
-                </abp-validation-summary>
-            </div>
-        </div>
-
-        <!-- Last Name -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="lastName">
-                {{ 'LastName' | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="text" class="form-control" name="lastName" id="lastName" required minlength="2"
-                    maxlength="50" [(ngModel)]="patient.lastName" #lastNameModel="ngModel" #lastNameEl />
-
-                <small class="text-danger" *ngIf="lastNameModel.touched && lastNameModel.invalid">
-                    <span *ngIf="lastNameModel.errors?.required">Last Name is required</span>
-                    <span *ngIf="lastNameModel.errors?.minlength">Must be at least 2 characters</span>
-                    <span *ngIf="lastNameModel.errors?.maxlength">Cannot exceed 50 characters</span>
-                </small>
-
-                <abp-validation-summary [control]="lastNameModel" [controlEl]="lastNameEl">
-                </abp-validation-summary>
-            </div>
-        </div>
-
-        <!-- Photo -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="photo">
-                {{ 'Photo' | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="file" class="form-control" (change)="onFileSelected($event)" />
-                <img *ngIf="photoPreview" [src]="photoPreview" width="100" height="100" class="mt-2 rounded" />
-            </div>
-        </div>
-
-
-        <!-- Date of Birth -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="dateOfBirth">
-                {{ 'DateOfBirth' | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="date" class="form-control" name="dateOfBirth" id="dateOfBirth" required
-                    [(ngModel)]="patient.dateOfBirth" #dobModel="ngModel" #dobEl />
-
-                <small class="text-danger" *ngIf="dobModel.touched && dobModel.invalid">
-                    <span *ngIf="dobModel.errors?.required">Date of Birth is required</span>
-                </small>
-
-                <abp-validation-summary [control]="dobModel" [controlEl]="dobEl">
-                </abp-validation-summary>
-            </div>
-        </div>
-
-        <!-- Gender -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="gender">
-                {{ 'Gender' | localize }}
-            </label>
-            <div class="col-md-9">
-                <select class="form-control" name="gender" id="gender" required [(ngModel)]="patient.gender"
-                    #genderModel="ngModel" #genderEl>
-                    <option *ngFor="let g of genderOptions" [value]="g">{{ g }}</option>
-                </select>
-
-                <abp-validation-summary [control]="genderModel" [controlEl]="genderEl">
-                </abp-validation-summary>
-            </div>
-        </div>
-
-        <!-- Phone Number -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="phoneNumber">
-                {{ 'PhoneNumber' | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="text" class="form-control" name="phoneNumber" id="phoneNumber"
-                    [(ngModel)]="patient.phoneNumber" #phoneModel="ngModel" #phoneEl />
-
-                <abp-validation-summary [control]="phoneModel" [controlEl]="phoneEl">
-                </abp-validation-summary>
-            </div>
-        </div>
-
-        <!-- Email -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="email">
-                {{ 'Email' | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="email" class="form-control" name="email" id="email" required [(ngModel)]="patient.email"
-                    #emailModel="ngModel" #emailEl />
-
-                <small class="text-danger" *ngIf="emailModel.touched && emailModel.invalid">
-                    <span *ngIf="emailModel.errors?.required">Email is required</span>
-                    <span *ngIf="emailModel.errors?.email">Invalid email format</span>
-                </small>
-
-                <abp-validation-summary [control]="emailModel" [controlEl]="emailEl">
-                </abp-validation-summary>
-            </div>
-        </div>
-
-
-
-        <!-- Address -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="address">
-                {{ 'Address' | localize }}
-            </label>
-            <div class="col-md-9">
-                <textarea class="form-control" name="address" id="address" rows="3" [(ngModel)]="patient.address"
-                    #addressModel="ngModel" #addressEl></textarea>
-
-                <abp-validation-summary [control]="addressModel" [controlEl]="addressEl">
-                </abp-validation-summary>
-            </div>
-        </div>
-
+        <small class="text-danger" *ngIf="formErrors.patientCode">
+          {{ formErrors.patientCode }}
+        </small>
+      </div>
     </div>
 
-    <!-- Modal Footer -->
-    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createPatientForm.form.valid || saving"
-        (onCancelClick)="bsModalRef.hide()">
-    </abp-modal-footer>
+    <!-- First Name -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="firstName">{{ 'FirstName' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="firstName" id="firstName" required minlength="2"
+               maxlength="50" [(ngModel)]="patient.firstName" #firstNameModel="ngModel" #firstNameEl />
+
+        <small class="text-danger" *ngIf="firstNameModel.touched && firstNameModel.invalid">
+          <span *ngIf="firstNameModel.errors?.required">First Name is required</span>
+          <span *ngIf="firstNameModel.errors?.minlength">Must be at least 2 characters</span>
+          <span *ngIf="firstNameModel.errors?.maxlength">Cannot exceed 50 characters</span>
+        </small>
+
+        <abp-validation-summary [control]="firstNameModel" [controlEl]="firstNameEl"></abp-validation-summary>
+      </div>
+    </div>
+
+    <!-- Last Name -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="lastName">{{ 'LastName' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="lastName" id="lastName" required minlength="2"
+               maxlength="50" [(ngModel)]="patient.lastName" #lastNameModel="ngModel" #lastNameEl />
+
+        <small class="text-danger" *ngIf="lastNameModel.touched && lastNameModel.invalid">
+          <span *ngIf="lastNameModel.errors?.required">Last Name is required</span>
+          <span *ngIf="lastNameModel.errors?.minlength">Must be at least 2 characters</span>
+          <span *ngIf="lastNameModel.errors?.maxlength">Cannot exceed 50 characters</span>
+        </small>
+
+        <abp-validation-summary [control]="lastNameModel" [controlEl]="lastNameEl"></abp-validation-summary>
+      </div>
+    </div>
+
+    <!-- Photo -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="photo">{{ 'Photo' | localize }}</label>
+      <div class="col-md-9">
+        <input type="file" class="form-control" (change)="onFileSelected($event)" />
+        <img *ngIf="photoPreview" [src]="photoPreview" width="100" height="100" class="mt-2 rounded" />
+      </div>
+    </div>
+
+    <!-- Date of Birth -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="dateOfBirth">{{ 'DateOfBirth' | localize }}</label>
+      <div class="col-md-9">
+        <input type="date" class="form-control" name="dateOfBirth" id="dateOfBirth" required
+               [(ngModel)]="patient.dateOfBirth" #dobModel="ngModel" #dobEl />
+
+        <small class="text-danger" *ngIf="dobModel.touched && dobModel.invalid">
+          <span *ngIf="dobModel.errors?.required">Date of Birth is required</span>
+        </small>
+
+        <abp-validation-summary [control]="dobModel" [controlEl]="dobEl"></abp-validation-summary>
+      </div>
+    </div>
+
+    <!-- Gender -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="gender">{{ 'Gender' | localize }}</label>
+      <div class="col-md-9">
+        <select class="form-control" name="gender" id="gender" required [(ngModel)]="patient.gender"
+                #genderModel="ngModel" #genderEl>
+          <option *ngFor="let g of genderOptions" [value]="g">{{ g }}</option>
+        </select>
+
+        <abp-validation-summary [control]="genderModel" [controlEl]="genderEl"></abp-validation-summary>
+      </div>
+    </div>
+
+    <!-- Phone Number -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="phoneNumber">{{ 'PhoneNumber' | localize }}</label>
+      <div class="col-md-9">
+        <input type="text" class="form-control" name="phoneNumber" id="phoneNumber"
+               [(ngModel)]="patient.phoneNumber" #phoneModel="ngModel" #phoneEl />
+
+        <abp-validation-summary [control]="phoneModel" [controlEl]="phoneEl"></abp-validation-summary>
+        <small class="text-danger" *ngIf="formErrors.phoneNumber">{{ formErrors.phoneNumber }}</small>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="email">{{ 'Email' | localize }}</label>
+      <div class="col-md-9">
+        <input type="email" class="form-control" name="email" id="email" required [(ngModel)]="patient.email"
+               #emailModel="ngModel" #emailEl />
+
+        <small class="text-danger" *ngIf="emailModel.touched && emailModel.invalid">
+          <span *ngIf="emailModel.errors?.required">Email is required</span>
+          <span *ngIf="emailModel.errors?.email">Invalid email format</span>
+        </small>
+
+        <abp-validation-summary [control]="emailModel" [controlEl]="emailEl"></abp-validation-summary>
+        <small class="text-danger" *ngIf="formErrors.email">{{ formErrors.email }}</small>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="address">{{ 'Address' | localize }}</label>
+      <div class="col-md-9">
+        <textarea class="form-control" name="address" id="address" rows="3"
+                  [(ngModel)]="patient.address" #addressModel="ngModel" #addressEl></textarea>
+
+        <abp-validation-summary [control]="addressModel" [controlEl]="addressEl"></abp-validation-summary>
+      </div>
+    </div>
+
+    <!-- General backend error -->
+    <div *ngIf="formErrors.general" class="alert alert-danger mt-2">
+      {{ formErrors.general }}
+    </div>
+
+  </div>
+
+  <!-- Modal Footer -->
+  <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createPatientForm.form.valid || saving"
+                    (onCancelClick)="bsModalRef.hide()">
+  </abp-modal-footer>
 
 </form>

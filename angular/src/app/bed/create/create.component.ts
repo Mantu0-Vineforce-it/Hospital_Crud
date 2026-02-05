@@ -1,11 +1,23 @@
-import { Component, Injector, OnInit, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  Injector,
+  OnInit,
+  ChangeDetectorRef,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { finalize } from 'rxjs/operators';
 
 import { AppComponentBase } from '../../../shared/app-component-base';
-import { CreateBedDto, BedCrudServiceServiceProxy, RoomDto, RoomDtoServiceServiceProxy } from '../../../shared/service-proxies/service-proxies';
+import {
+  CreateBedDto,
+  BedCrudServiceServiceProxy,
+  RoomDto,
+  RoomDtoServiceServiceProxy,
+} from '../../../shared/service-proxies/service-proxies';
 import { AbpModalHeaderComponent } from '../../../shared/components/modal/abp-modal-header.component';
 import { AbpModalFooterComponent } from '../../../shared/components/modal/abp-modal-footer.component';
 import { AbpValidationSummaryComponent } from '../../../shared/components/validation/abp-validation.summary.component';
@@ -26,11 +38,14 @@ import { LocalizePipe } from '../../../shared/pipes/localize.pipe';
 export class CreateBedDialogComponent extends AppComponentBase implements OnInit {
   saving = false;
 
-  // form model
+  // Form model
   bed: CreateBedDto = new CreateBedDto();
 
-  // List of rooms to populate the room dropdown
+  // Rooms for dropdown
   rooms: RoomDto[] = [];
+
+  // Field-specific backend validation errors
+  formErrors: { bedNumber?: string; roomId?: string; general?: string } = {};
 
   @Output() onSave = new EventEmitter<any>();
 
@@ -45,7 +60,6 @@ export class CreateBedDialogComponent extends AppComponentBase implements OnInit
   }
 
   ngOnInit(): void {
-    // Load all rooms for selection
     this._roomService.getAllRooms()
       .pipe(finalize(() => this.cd.detectChanges()))
       .subscribe((rooms: RoomDto[]) => {
@@ -55,12 +69,10 @@ export class CreateBedDialogComponent extends AppComponentBase implements OnInit
 
   save(): void {
     this.saving = true;
+    this.formErrors = {}; // reset previous errors
 
-    // Creating the Bed input DTO
     const input = new CreateBedDto();
-    input.bedNumber = this.bed.bedNumber;
-    input.isOccupied = this.bed.isOccupied;
-    input.roomId = this.bed.roomId;
+    input.init(this.bed);
 
     this._bedService.createBed(input)
       .pipe(finalize(() => {
@@ -73,8 +85,27 @@ export class CreateBedDialogComponent extends AppComponentBase implements OnInit
           this.bsModalRef.hide();
           this.onSave.emit(null);
         },
-        () => {
-          this.notify.error(this.l('SaveFailed'));
+        (err) => {
+          this.formErrors = {};
+
+          // Field-specific backend validation errors
+          if (err?.error?.details) {
+            if (err.error.details.BedNumber) {
+              this.formErrors.bedNumber = err.error.details.BedNumber[0];
+            }
+            if (err.error.details.RoomId) {
+              this.formErrors.roomId = err.error.details.RoomId[0];
+            }
+          }
+
+          // Check general error messages for duplicates
+          if (!this.formErrors.bedNumber && err.error?.message?.toLowerCase().includes('bednumber')) {
+            this.formErrors.bedNumber = err.error.message;
+          }
+
+          if (!this.formErrors.roomId && !this.formErrors.bedNumber) {
+            this.formErrors.general = err.error?.message || 'Save failed';
+          }
         }
       );
   }

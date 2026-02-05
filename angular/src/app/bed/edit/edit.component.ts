@@ -2,6 +2,7 @@ import {
   Component,
   Injector,
   OnInit,
+  ChangeDetectorRef,
   EventEmitter,
   Output,
 } from '@angular/core';
@@ -36,14 +37,17 @@ import { LocalizePipe } from '../../../shared/pipes/localize.pipe';
     LocalizePipe,
   ],
 })
-export class EditBedDialogComponent
-  extends AppComponentBase
-  implements OnInit {
+export class EditBedDialogComponent extends AppComponentBase implements OnInit {
   saving = false;
 
+  // Form model
   bed: BedDto = new BedDto();
+
+  // Rooms for dropdown
   rooms: RoomDto[] = [];
 
+  // Field-specific backend validation errors
+  formErrors: { bedNumber?: string; roomId?: string; general?: string } = {};
 
   @Output() onSave = new EventEmitter<BedDto>();
 
@@ -51,55 +55,79 @@ export class EditBedDialogComponent
     injector: Injector,
     private _bedService: BedCrudServiceServiceProxy,
     private _roomService: RoomDtoServiceServiceProxy,
-    public bsModalRef: BsModalRef
+    public bsModalRef: BsModalRef,
+    private cd: ChangeDetectorRef
   ) {
     super(injector);
   }
+
   ngOnInit(): void {
-  this.loadRooms();
-}
+    this.loadRooms();
+  }
 
-loadRooms(): void {
-  this._roomService.getAllRooms().subscribe((result: RoomDto[]) => {
-    this.rooms = result;
-
-    // Now assign the bed after rooms are loaded
-    if (this.bsModalRef.content?.bed) {
-      this.bed = this.bsModalRef.content.bed;
-
-      // Ensure the types match
-      this.bed.roomId = Number(this.bed.roomId);
-    } else {
-      this.notify.warn(this.l('BedDataNotFound'));
-    }
-  });
-}
-
-
-
-  save(): void {
-    if (this.saving) {
-      return;
-    }
-
-    this.saving = true;
-
-    const input = new UpdateBedDto();
-    input.init(this.bed);
-
-    this._bedService
-      .updateBed(input)
-      .pipe(finalize(() => (this.saving = false)))
+  loadRooms(): void {
+    this._roomService.getAllRooms()
+      .pipe(finalize(() => this.cd.detectChanges()))
       .subscribe({
-        next: () => {
-          this.notify.info(this.l('SavedSuccessfully'));
-          this.bsModalRef.hide();
-          this.onSave.emit(this.bed);
+        next: (rooms: RoomDto[]) => {
+          this.rooms = rooms;
+
+          // Assign the bed data after rooms are loaded
+          if (this.bsModalRef.content?.bed) {
+            this.bed = this.bsModalRef.content.bed;
+
+            // Ensure roomId is a number for <select> binding
+            this.bed.roomId = Number(this.bed.roomId);
+          } else {
+            this.notify.warn(this.l('BedDataNotFound'));
+          }
         },
-        error: (error) => {
-          this.notify.error(this.l('SaveFailed'));
-          console.error('Update bed error:', error);
+        error: (err) => {
+          this.notify.error(this.l('FailedToLoadRooms'));
+          console.error('Load rooms error:', err);
         },
       });
   }
+
+ save(): void {
+  this.saving = true;
+  this.formErrors = {};
+
+  const input = new UpdateBedDto();
+  input.init(this.bed);
+
+  this._bedService.updateBed(input)
+    .pipe(finalize(() => {
+      this.saving = false;
+      this.cd.detectChanges();
+    }))
+    .subscribe({
+      next: () => {
+        this.notify.info(this.l('SavedSuccessfully'));
+        this.bsModalRef.hide();
+        this.onSave.emit(this.bed);
+      },
+      error: (err) => {
+        this.formErrors = {};
+
+        if (err?.error?.details) {
+          if (err.error.details.BedNumber) {
+            this.formErrors.bedNumber = err.error.details.BedNumber[0];
+          }
+          if (err.error.details.RoomId) {
+            this.formErrors.roomId = err.error.details.RoomId[0];
+          }
+        }
+
+        if (!this.formErrors.bedNumber && err.error?.message?.toLowerCase().includes('bednumber')) {
+          this.formErrors.bedNumber = err.error.message;
+        }
+
+        if (!this.formErrors.roomId && !this.formErrors.bedNumber) {
+          this.formErrors.general = err.error?.message || 'Save failed';
+        }
+      },
+    });
+}
+
 }

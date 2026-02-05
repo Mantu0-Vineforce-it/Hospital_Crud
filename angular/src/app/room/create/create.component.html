@@ -1,10 +1,11 @@
 <form class="form-horizontal" autocomplete="off" #createRoomForm="ngForm" (ngSubmit)="save()">
 
-  <abp-modal-header [title]="'createRoom' | localize" (onCloseClick)="bsModalRef.hide()">
+  <abp-modal-header [title]="'CreateRoom' | localize" (onCloseClick)="bsModalRef.hide()">
   </abp-modal-header>
 
   <div class="modal-body">
 
+    <!-- Room Number -->
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="roomNumber">
         {{ 'RoomNumber' | localize }}
@@ -18,10 +19,13 @@
         </small>
 
         <abp-validation-summary [control]="roomNumberModel" [controlEl]="roomNumberEl"></abp-validation-summary>
+        <small class="text-danger" *ngIf="formErrors.roomNumber">
+          {{ formErrors.roomNumber }}
+        </small>
       </div>
     </div>
 
-
+    <!-- Room Type -->
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="roomType">
         {{ 'RoomType' | localize }}
@@ -33,10 +37,11 @@
         </select>
 
         <abp-validation-summary [control]="roomTypeModel" [controlEl]="roomTypeEl"></abp-validation-summary>
+        <small class="text-danger" *ngIf="formErrors.roomType">{{ formErrors.roomType }}</small>
       </div>
     </div>
 
-
+    <!-- Total Beds -->
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="totalBeds">
         {{ 'TotalBeds' | localize }}
@@ -51,10 +56,11 @@
         </small>
 
         <abp-validation-summary [control]="totalBedsModel" [controlEl]="totalBedsEl"></abp-validation-summary>
+        <small class="text-danger" *ngIf="formErrors.totalBeds">{{ formErrors.totalBeds }}</small>
       </div>
     </div>
 
-
+    <!-- Is Active -->
     <div class="form-group row">
       <label class="col-md-3 col-form-label" for="isActive">
         {{ 'IsActive' | localize }}
@@ -67,8 +73,10 @@
       </div>
     </div>
 
-  </div>
+    <!-- General Error -->
+    <div class="text-danger" *ngIf="formErrors.general">{{ formErrors.general }}</div>
 
+  </div>
 
   <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createRoomForm.form.valid || saving"
                     (onCancelClick)="bsModalRef.hide()">

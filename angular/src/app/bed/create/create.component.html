@@ -1,10 +1,11 @@
- <form class="form-horizontal" autocomplete="off" #createBedForm="ngForm" (ngSubmit)="save()">
+<form class="form-horizontal" autocomplete="off" #createBedForm="ngForm" (ngSubmit)="save()">
 
   <abp-modal-header [title]="'createBed' | localize" (onCloseClick)="bsModalRef.hide()">
   </abp-modal-header>
 
   <div class="modal-body">
 
+    <!-- Bed Number -->
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="bedNumber">
         {{ 'BedNumber' | localize }}
@@ -13,14 +14,19 @@
         <input type="text" class="form-control" name="bedNumber" id="bedNumber" required
                [(ngModel)]="bed.bedNumber" #bedNumberModel="ngModel" #bedNumberEl />
 
+        <!-- Angular validation -->
         <small class="text-danger" *ngIf="bedNumberModel.touched && bedNumberModel.invalid">
           <span *ngIf="bedNumberModel.errors?.required">Bed Number is required</span>
         </small>
+
+        <!-- Backend validation -->
+        <small class="text-danger" *ngIf="formErrors.bedNumber">{{ formErrors.bedNumber }}</small>
 
         <abp-validation-summary [control]="bedNumberModel" [controlEl]="bedNumberEl"></abp-validation-summary>
       </div>
     </div>
 
+    <!-- Room Selection -->
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="roomId">
         {{ 'Room' | localize }}
@@ -31,10 +37,14 @@
           <option *ngFor="let room of rooms" [value]="room.id">{{ room.roomNumber }}</option>
         </select>
 
+        <!-- Backend validation -->
+        <small class="text-danger" *ngIf="formErrors.roomId">{{ formErrors.roomId }}</small>
+
         <abp-validation-summary [control]="roomIdModel" [controlEl]="roomIdEl"></abp-validation-summary>
       </div>
     </div>
 
+    <!-- Is Occupied -->
     <div class="form-group row">
       <label class="col-md-3 col-form-label" for="isOccupied">
         {{ 'IsOccupied' | localize }}
@@ -42,10 +52,12 @@
       <div class="col-md-9">
         <input type="checkbox" class="form-check-input" name="isOccupied" id="isOccupied"
                [(ngModel)]="bed.isOccupied" #isOccupiedModel="ngModel" #isOccupiedEl />
-
         <abp-validation-summary [control]="isOccupiedModel" [controlEl]="isOccupiedEl"></abp-validation-summary>
       </div>
     </div>
+
+    <!-- General Error -->
+    <div class="text-danger" *ngIf="formErrors.general">{{ formErrors.general }}</div>
 
   </div>
 
@@ -54,4 +66,3 @@
   </abp-modal-footer>
 
 </form>
-
