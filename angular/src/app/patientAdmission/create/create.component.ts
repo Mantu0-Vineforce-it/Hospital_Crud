@@ -87,36 +87,36 @@ loadDropdowns(): void {
 }
 
 
-
 save(): void {
+  const dto = new CreatePatientAdmissionDto();
 
-    if (this.admission.admissionDate) {
-    this.admission.admissionDate = moment(this.admission.admissionDate);
-  }
-    // Create a proper DTO instance
-    const dto = new CreatePatientAdmissionDto();
+  dto.admissionDate = this.admission.admissionDate
+    ? moment(this.admission.admissionDate, 'YYYY-MM-DD')
+    : null;
 
-    // Assign fields directly as Moment
-    dto.admissionDate = this.admission.admissionDate || null; // Moment object
-    dto.dischargeDate = this.admission.dischargeDate || null; // Moment object
-    dto.diagnosis = this.admission.diagnosis;
-    dto.status = this.admission.status;
-    dto.patientId = this.admission.patientId;
-    dto.doctorId = this.admission.doctorId;
-    dto.bedId = this.admission.bedId;
+  dto.dischargeDate = this.admission.dischargeDate
+    ? moment(this.admission.dischargeDate, 'YYYY-MM-DD')
+    : null;
 
-    // Call the ABP service
-    this._admissionService.createPatientAdmission(dto).subscribe(
-        () => {
-            this.notify.success('Patient admission saved successfully.');
-            this.bsModalRef.hide();
-        },
-        (error) => {
-            console.error(error);
-            this.notify.error('Error saving patient admission.');
-        }
-    );
+  dto.diagnosis = this.admission.diagnosis;
+  dto.status = this.admission.status;
+  dto.patientId = this.admission.patientId;
+  dto.doctorId = this.admission.doctorId;
+  dto.bedId = this.admission.bedId;
+
+  this._admissionService.createPatientAdmission(dto).subscribe({
+    next: () => {
+      this.notify.success('Patient admission saved successfully.');
+      this.bsModalRef.hide();
+      this.onSave.emit();
+    },
+    error: (err) => {
+      console.error(err);
+      this.notify.error('Error saving patient admission.');
+    }
+  });
 }
+
 
 
 

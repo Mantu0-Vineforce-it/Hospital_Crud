@@ -1,83 +1,93 @@
-<form class="form-horizontal" autocomplete="off" #editBedForm="ngForm" (ngSubmit)="save()">
-
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #editBedForm="ngForm"
+  (ngSubmit)="save()"
+>
   <!-- Modal Header -->
-  <abp-modal-header [title]="'EditBed' | localize" (onCloseClick)="bsModalRef.hide()">
+  <abp-modal-header
+    [title]="'EditBed' | localize"
+    (onCloseClick)="bsModalRef.hide()"
+  >
   </abp-modal-header>
 
   <div class="modal-body">
 
-    <!-- Room Number (readonly during edit) -->
+    <!-- Bed Number -->
     <div class="form-group row required">
-      <label class="col-md-3 col-form-label" for="roomNumber">
+      <label class="col-md-3 col-form-label" for="bedNumber">
         {{ 'BedNumber' | localize }}
       </label>
       <div class="col-md-9">
-        <input type="text" class="form-control" name="roomNumber" id="roomNumber" required [(ngModel)]="room.roomNumber"
-          #roomNumberModel="ngModel" #roomNumberEl readonly />
+        <input
+          type="text"
+          class="form-control"
+          name="bedNumber"
+          id="bedNumber"
+          required
+          [(ngModel)]="bed.bedNumber"
+          #bedNumberModel="ngModel"
+          #bedNumberEl
+        />
 
-        <small class="text-danger" *ngIf="roomNumberModel.touched && roomNumberModel.invalid">
-          <span *ngIf="roomNumberModel.errors?.required">Room Number is required</span>
-        </small>
-
-        <abp-validation-summary [control]="roomNumberModel" [controlEl]="roomNumberEl"></abp-validation-summary>
+        <abp-validation-summary
+          [control]="bedNumberModel"
+          [controlEl]="bedNumberEl"
+        ></abp-validation-summary>
       </div>
     </div>
 
-    <!-- Room Type -->
+    <!-- Room -->
     <div class="form-group row required">
-      <label class="col-md-3 col-form-label" for="roomType">
-        {{ 'RoomType' | localize }}
+      <label class="col-md-3 col-form-label" for="roomId">
+        {{ 'Room' | localize }}
       </label>
       <div class="col-md-9">
-        <select class="form-control" name="roomType" id="roomType" required [(ngModel)]="room.roomType"
-          #roomTypeModel="ngModel" #roomTypeEl>
+        <select
+  class="form-control"
+  name="roomId"
+  id="roomId"
+  required
+  [(ngModel)]="bed.roomId"
+  #roomIdModel="ngModel"
+  #roomIdEl
+>
+  <option *ngFor="let room of rooms" [ngValue]="room.id">
+    {{ room.roomNumber }}
+  </option>
+</select>
 
-          <option *ngFor="let type of roomTypes" [ngValue]="type.value">
-            {{ type.label }}
-          </option>
 
-        </select>
-
-        <abp-validation-summary [control]="roomTypeModel" [controlEl]="roomTypeEl"></abp-validation-summary>
+        <abp-validation-summary
+          [control]="roomIdModel"
+          [controlEl]="roomIdEl"
+        ></abp-validation-summary>
       </div>
     </div>
 
-    <!-- Total Beds -->
-    <div class="form-group row required">
-      <label class="col-md-3 col-form-label" for="totalBeds">
-        {{ 'TotalBeds' | localize }}
-      </label>
-      <div class="col-md-9">
-        <input type="number" class="form-control" name="totalBeds" id="totalBeds" required min="1"
-          [(ngModel)]="room.totalBeds" #totalBedsModel="ngModel" #totalBedsEl />
-
-        <small class="text-danger" *ngIf="totalBedsModel.touched && totalBedsModel.invalid">
-          <span *ngIf="totalBedsModel.errors?.required">Total Beds is required</span>
-          <span *ngIf="totalBedsModel.errors?.min">Must have at least 1 bed</span>
-        </small>
-
-        <abp-validation-summary [control]="totalBedsModel" [controlEl]="totalBedsEl"></abp-validation-summary>
-      </div>
-    </div>
-
-    <!-- Is Active -->
+    <!-- Is Occupied -->
     <div class="form-group row">
-      <label class="col-md-3 col-form-label" for="isActive">
-        {{ 'IsActive' | localize }}
+      <label class="col-md-3 col-form-label" for="isOccupied">
+        {{ 'IsOccupied' | localize }}
       </label>
       <div class="col-md-9">
-        <input type="checkbox" class="form-check-input" name="isActive" id="isActive" [(ngModel)]="room.isActive"
-          #isActiveModel="ngModel" #isActiveEl />
-
-        <abp-validation-summary [control]="isActiveModel" [controlEl]="isActiveEl"></abp-validation-summary>
+        <input
+          type="checkbox"
+          class="form-check-input"
+          name="isOccupied"
+          id="isOccupied"
+          [(ngModel)]="bed.isOccupied"
+        />
       </div>
     </div>
 
   </div>
 
   <!-- Modal Footer -->
-  <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!editBedForm.form.valid || saving"
-    (onCancelClick)="bsModalRef.hide()">
+  <abp-modal-footer
+    [cancelDisabled]="saving"
+    [saveDisabled]="!editBedForm.form.valid || saving"
+    (onCancelClick)="bsModalRef.hide()"
+  >
   </abp-modal-footer>
-
 </form>

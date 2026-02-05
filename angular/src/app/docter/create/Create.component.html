@@ -19,8 +19,11 @@
                     <span *ngIf="codeModel.errors?.required">Doctor Code is required</span>
                 </small>
 
-                <abp-validation-summary [control]="codeModel" [controlEl]="codeEl">
-                </abp-validation-summary>
+                <abp-validation-summary [control]="codeModel" [controlEl]="codeEl"></abp-validation-summary>
+                <small class="text-danger" *ngIf="formErrors.doctorCode">
+                    {{ formErrors.doctorCode }}
+                </small>
+
             </div>
         </div>
 
@@ -51,7 +54,7 @@
             </label>
             <div class="col-md-9">
                 <select class="form-control" name="specialization" id="specialization" required
-                        [(ngModel)]="doctor.specialization" #specializationModel="ngModel" #specializationEl>
+                    [(ngModel)]="doctor.specialization" #specializationModel="ngModel" #specializationEl>
                     <option *ngFor="let s of specializationOptions" [value]="s">{{ s }}</option>
                 </select>
 
@@ -67,7 +70,7 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="qualification" id="qualification"
-                       [(ngModel)]="doctor.qualification" #qualificationModel="ngModel" #qualificationEl />
+                    [(ngModel)]="doctor.qualification" #qualificationModel="ngModel" #qualificationEl />
 
                 <abp-validation-summary [control]="qualificationModel" [controlEl]="qualificationEl">
                 </abp-validation-summary>
@@ -81,10 +84,13 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="phoneNumber" id="phoneNumber"
-                       [(ngModel)]="doctor.phoneNumber" #phoneModel="ngModel" #phoneEl />
+                    [(ngModel)]="doctor.phoneNumber" #phoneModel="ngModel" #phoneEl />
 
-                <abp-validation-summary [control]="phoneModel" [controlEl]="phoneEl">
-                </abp-validation-summary>
+                <abp-validation-summary [control]="phoneModel" [controlEl]="phoneEl"></abp-validation-summary>
+                <small class="text-danger" *ngIf="formErrors.phoneNumber">
+                    {{ formErrors.phoneNumber }}
+                </small>
+
             </div>
         </div>
 
@@ -94,36 +100,39 @@
                 {{ 'Email' | localize }}
             </label>
             <div class="col-md-9">
-                <input type="email" class="form-control" name="email" id="email" required
-                       [(ngModel)]="doctor.email" #emailModel="ngModel" #emailEl />
+                <input type="email" class="form-control" name="email" id="email" required [(ngModel)]="doctor.email"
+                    #emailModel="ngModel" #emailEl />
 
                 <small class="text-danger" *ngIf="emailModel.touched && emailModel.invalid">
                     <span *ngIf="emailModel.errors?.required">Email is required</span>
                     <span *ngIf="emailModel.errors?.email">Invalid email format</span>
                 </small>
 
-                <abp-validation-summary [control]="emailModel" [controlEl]="emailEl">
-                </abp-validation-summary>
+                <abp-validation-summary [control]="emailModel" [controlEl]="emailEl"></abp-validation-summary>
+                <small class="text-danger" *ngIf="formErrors.email">
+                    {{ formErrors.email }}
+                </small>
+
             </div>
         </div>
 
         <!-- Availability -->
         <div class="form-group row">
-    <label class="col-md-3 col-form-label" for="isAvailable">
-        {{ 'IsAvailable' | localize }}
-    </label>
-    <div class="col-md-9">
-        <input type="checkbox" name="isAvailable" id="isAvailable"
-               [(ngModel)]="doctor.isAvailble" #isAvailableModel="ngModel" #isAvailableEl />
-    </div>
-</div>
+            <label class="col-md-3 col-form-label" for="isAvailable">
+                {{ 'IsAvailable' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="checkbox" name="isAvailable" id="isAvailable" [(ngModel)]="doctor.isAvailble"
+                    #isAvailableModel="ngModel" #isAvailableEl />
+            </div>
+        </div>
 
 
     </div>
 
     <!-- Modal Footer -->
     <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createDoctorForm.form.valid || saving"
-                      (onCancelClick)="bsModalRef.hide()">
+        (onCancelClick)="bsModalRef.hide()">
     </abp-modal-footer>
 
 </form>

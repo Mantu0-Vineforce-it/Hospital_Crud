@@ -1,7 +1,10 @@
 ﻿using Abp.Application.Services;
 using Abp.Domain.Repositories;
+using Abp.Runtime.Validation;
+using Abp.UI;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using UserCrud.Docters.Dto;
@@ -59,32 +62,79 @@ namespace UserCrud.Docters
         // Create a new doctor
         public async Task<DocterDto> CreateDoctorAsync(CreateDocterDto input)
         {
-            var doctor = new doctor
+            try
             {
-                DocterCode = input.DocterCode,
-                FullName = input.FullName,
-                Specialization = input.Specialization,
-                Qualification = input.Qualification,
-                PhoneNumber = input.PhoneNumber,
-                Email = input.Email,
-                IsAvailble = input.IsAvailble
-            };
+                var validationErrors = new List<ValidationResult>();
 
-            var createdDoctor = await _doctorRepository.InsertAsync(doctor);
+                // Check DoctorCode duplicate
+                if (await _doctorRepository.FirstOrDefaultAsync(d => d.DocterCode == input.DocterCode) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"DoctorCode '{input.DocterCode}' is already in use.",
+                        new[] { "DoctorCode" }));
+                }
 
-            return new DocterDto
+                // Check Email duplicate
+                if (await _doctorRepository.FirstOrDefaultAsync(d => d.Email == input.Email) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"Email '{input.Email}' is already in use.",
+                        new[] { "Email" }));
+                }
+
+                // Check PhoneNumber duplicate
+                if (await _doctorRepository.FirstOrDefaultAsync(d => d.PhoneNumber == input.PhoneNumber) != null)
+                {
+                    validationErrors.Add(new ValidationResult(
+                        $"Phone number '{input.PhoneNumber}' is already in use.",
+                        new[] { "PhoneNumber" }));
+                }
+
+                // If any validation errors exist, throw
+                if (validationErrors.Any())
+                {
+                    throw new AbpValidationException("Validation failed", validationErrors);
+                }
+
+                // Create new doctor entity
+                var doctor = new doctor
+                {
+                    DocterCode = input.DocterCode,
+                    FullName = input.FullName,
+                    Specialization = input.Specialization,
+                    Qualification = input.Qualification,
+                    PhoneNumber = input.PhoneNumber,
+                    Email = input.Email,
+                    IsAvailble = input.IsAvailble
+                };
+
+                // Insert into repository
+                var createdDoctor = await _doctorRepository.InsertAsync(doctor);
+
+                // Return DTO
+                return new DocterDto
+                {
+                    Id = createdDoctor.Id,
+                    DocterCode = createdDoctor.DocterCode,
+                    FullName = createdDoctor.FullName,
+                    Specialization = createdDoctor.Specialization,
+                    Qualification = createdDoctor.Qualification,
+                    PhoneNumber = createdDoctor.PhoneNumber,
+                    Email = createdDoctor.Email,
+                    IsAvailble = createdDoctor.IsAvailble
+                };
+            }
+            catch (AbpValidationException vex)
             {
-                Id = createdDoctor.Id,
-                DocterCode = createdDoctor.DocterCode,
-                FullName = createdDoctor.FullName,
-                Specialization = createdDoctor.Specialization,
-                Qualification = createdDoctor.Qualification,
-                PhoneNumber = createdDoctor.PhoneNumber,
-                Email = createdDoctor.Email,
-                IsAvailble = createdDoctor.IsAvailble
-            };
+                // Re-throw validation exceptions as they are expected
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Catch unexpected exceptions and wrap if needed
+                throw new UserFriendlyException("An unexpected error occurred while creating the doctor.", ex);
+            }
         }
-
         // Update an existing doctor
         public async Task<DocterDto> UpdateDoctorAsync(UpdateDocterDto input)
         {

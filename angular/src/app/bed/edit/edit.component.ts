@@ -14,8 +14,9 @@ import { AppComponentBase } from '../../../shared/app-component-base';
 import {
   BedDto,
   RoomDto,
+  BedCrudServiceServiceProxy,
   RoomDtoServiceServiceProxy,
-  UpdateRoomDto,
+  UpdateBedDto,
 } from '../../../shared/service-proxies/service-proxies';
 
 import { AbpModalHeaderComponent } from '../../../shared/components/modal/abp-modal-header.component';
@@ -24,8 +25,7 @@ import { AbpValidationSummaryComponent } from '../../../shared/components/valida
 import { LocalizePipe } from '../../../shared/pipes/localize.pipe';
 
 @Component({
-//   selector: 'app-edit-room-dialog',
-  templateUrl:'./edit.component.html',
+  templateUrl: './edit.component.html',
   standalone: true,
   imports: [
     CommonModule,
@@ -36,37 +36,46 @@ import { LocalizePipe } from '../../../shared/pipes/localize.pipe';
     LocalizePipe,
   ],
 })
-export class EditBedDialogComponent extends AppComponentBase implements OnInit {
-
+export class EditBedDialogComponent
+  extends AppComponentBase
+  implements OnInit {
   saving = false;
-  room: RoomDto = new RoomDto();
-  bed!:BedDto;
-  @Output() onSave = new EventEmitter<RoomDto>();
 
-  /** Room types for dropdown */
-  readonly roomTypes = [
-    { value: 1, label: 'General Ward' },
-    { value: 2, label: 'Semi Private' },
-    { value: 3, label: 'Private' },
-    { value: 4, label: 'ICU' },
-    { value: 5, label: 'VIP Suite' },
-  ];
+  bed: BedDto = new BedDto();
+  rooms: RoomDto[] = [];
+
+
+  @Output() onSave = new EventEmitter<BedDto>();
 
   constructor(
     injector: Injector,
+    private _bedService: BedCrudServiceServiceProxy,
     private _roomService: RoomDtoServiceServiceProxy,
     public bsModalRef: BsModalRef
   ) {
     super(injector);
   }
-
   ngOnInit(): void {
-    if (this.bsModalRef.content?.room) {
-      this.room = this.bsModalRef.content.room;
+  this.loadRooms();
+}
+
+loadRooms(): void {
+  this._roomService.getAllRooms().subscribe((result: RoomDto[]) => {
+    this.rooms = result;
+
+    // Now assign the bed after rooms are loaded
+    if (this.bsModalRef.content?.bed) {
+      this.bed = this.bsModalRef.content.bed;
+
+      // Ensure the types match
+      this.bed.roomId = Number(this.bed.roomId);
     } else {
-      this.notify.warn(this.l('RoomDataNotFound'));
+      this.notify.warn(this.l('BedDataNotFound'));
     }
-  }
+  });
+}
+
+
 
   save(): void {
     if (this.saving) {
@@ -75,21 +84,21 @@ export class EditBedDialogComponent extends AppComponentBase implements OnInit {
 
     this.saving = true;
 
-    const input = new UpdateRoomDto();
-    input.init(this.room);
+    const input = new UpdateBedDto();
+    input.init(this.bed);
 
-    this._roomService
-      .updateRoom(input)
+    this._bedService
+      .updateBed(input)
       .pipe(finalize(() => (this.saving = false)))
       .subscribe({
         next: () => {
           this.notify.info(this.l('SavedSuccessfully'));
           this.bsModalRef.hide();
-          this.onSave.emit(this.room);
+          this.onSave.emit(this.bed);
         },
         error: (error) => {
           this.notify.error(this.l('SaveFailed'));
-          console.error('Update room error:', error);
+          console.error('Update bed error:', error);
         },
       });
   }

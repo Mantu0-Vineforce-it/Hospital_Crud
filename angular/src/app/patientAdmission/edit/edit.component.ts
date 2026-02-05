@@ -14,6 +14,7 @@ import {
   DoctorCrudServiceServiceProxy,
   BedCrudServiceServiceProxy,
   PatientAdmissionCrudServiceServiceProxy,
+  UpdatePatientAdmissionDto,
 } from '../../../shared/service-proxies/service-proxies';
 
 import { AbpModalHeaderComponent } from '../../../shared/components/modal/abp-modal-header.component';
@@ -94,38 +95,41 @@ export class EditPatientAdmissionDialogComponent extends AppComponentBase implem
   }
 
   save(): void {
-    if (this.saving) return; // prevent double click
-    this.saving = true;
+  if (this.saving) return;
+  this.saving = true;
 
-    const dto = new CreatePatientAdmissionDto();
+  const dto = new UpdatePatientAdmissionDto();
 
-    // Convert date strings to Moment for backend
-    dto.admissionDate = this.admission.admissionDate
-      ? moment(this.admission.admissionDate, 'YYYY-MM-DD')
-      : null;
-    dto.dischargeDate = this.admission.dischargeDate
-      ? moment(this.admission.dischargeDate, 'YYYY-MM-DD')
-      : null;
+  dto.id = this.admission.id; // 🔥 REQUIRED
 
-    dto.diagnosis = this.admission.diagnosis;
-    dto.status = this.admission.status;
-    dto.patientId = this.admission.patientId;
-    dto.doctorId = this.admission.doctorId;
-    dto.bedId = this.admission.bedId;
+  dto.admissionDate = this.admission.admissionDate
+    ? moment(this.admission.admissionDate, 'YYYY-MM-DD')
+    : null;
 
-    this._admissionService
-      .createPatientAdmission(dto)
-      .pipe(finalize(() => (this.saving = false)))
-      .subscribe(
-        () => {
-          this.notify.success('Patient admission saved successfully.');
-          this.onSave.emit(this.admission); // emit updated object
-          this.bsModalRef.hide();
-        },
-        (error) => {
-          console.error(error);
-          this.notify.error('Error saving patient admission.');
-        }
-      );
-  }
+  dto.dischargeDate = this.admission.dischargeDate
+    ? moment(this.admission.dischargeDate, 'YYYY-MM-DD')
+    : null;
+
+  dto.diagnosis = this.admission.diagnosis;
+  dto.status = this.admission.status;
+  dto.patientId = this.admission.patientId;
+  dto.doctorId = this.admission.doctorId;
+  dto.bedId = this.admission.bedId;
+
+  this._admissionService
+    .updatePatientAdmission(dto)
+    .pipe(finalize(() => (this.saving = false)))
+    .subscribe({
+      next: () => {
+        this.notify.success('Patient admission updated successfully.');
+        this.onSave.emit(this.admission);
+        this.bsModalRef.hide();
+      },
+      error: (err) => {
+        console.error(err);
+        this.notify.error('Error updating patient admission.');
+      }
+    });
+}
+
 }
