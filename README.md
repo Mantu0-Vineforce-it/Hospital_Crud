@@ -37,10 +37,10 @@ It supports CRUD (Create, Read, Update, Delete) operations for all major hospita
 ## Technologies Used
 - **Backend:** .NET Core / ASP.NET Web API (for handling CRUD operations, business logic, and API endpoints)  
 - **Frontend:** Angular (for building a responsive and interactive user interface)  
-- **Database:** SQL Server / MySQL / PostgreSQL (for storing patient, doctor, room, and admission data)  
+- **Database:** SQL Server  (for storing patient, doctor, room, and admission data)  
 - **Tools & IDEs:**  
   - Visual Studio / Visual Studio Code  
-  - Postman (for testing APIs)  
+  - Swagger (for testing APIs)  
   - Git / GitHub (for version control)  
   - Angular CLI (for frontend project management)  
 
