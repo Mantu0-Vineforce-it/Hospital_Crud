@@ -1,16 +1,11 @@
-﻿using Abp.Domain.Entities.Auditing;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+﻿using Abp.Application.Services.Dto;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UserCrud.Patients.Enums;
 
 namespace UserCrud.Patients.Dto
 {
-    public class UpdatePattientDto:FullAuditedEntity<long>
+    public class UpdatePattientDto : EntityDto<long>
     {
         public string PatientCode { get; set; }
         public string FirstName { get; set; }
@@ -20,6 +15,13 @@ namespace UserCrud.Patients.Dto
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
-        public string PhotoBase64 { get; set; }
+
+        public List<string> PhotosBase64 { get; set; } = new List<string>();
+
+        // IDs of images already in DB
+        public List<long> ImageIds { get; set; } = new List<long>();
+
+        // IDs of images the user wants to remove
+        public List<long> RemovedPhotoIds { get; set; } = new List<long>();
     }
 }

@@ -3876,14 +3876,6 @@ export interface ICreatePatientAdmissionDto {
 }
 
 export class CreatePatientDto implements ICreatePatientDto {
-    id: number;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
     patientCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -3892,7 +3884,7 @@ export class CreatePatientDto implements ICreatePatientDto {
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
-    photoBase64: string | undefined;
+    photosBase64: string[] | undefined;
 
     constructor(data?: ICreatePatientDto) {
         if (data) {
@@ -3905,14 +3897,6 @@ export class CreatePatientDto implements ICreatePatientDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = _data["creatorUserId"];
-            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = _data["lastModifierUserId"];
-            this.isDeleted = _data["isDeleted"];
-            this.deleterUserId = _data["deleterUserId"];
-            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
             this.patientCode = _data["patientCode"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
@@ -3921,7 +3905,11 @@ export class CreatePatientDto implements ICreatePatientDto {
             this.phoneNumber = _data["phoneNumber"];
             this.email = _data["email"];
             this.address = _data["address"];
-            this.photoBase64 = _data["photoBase64"];
+            if (Array.isArray(_data["photosBase64"])) {
+                this.photosBase64 = [] as any;
+                for (let item of _data["photosBase64"])
+                    this.photosBase64.push(item);
+            }
         }
     }
 
@@ -3934,14 +3922,6 @@ export class CreatePatientDto implements ICreatePatientDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
         data["patientCode"] = this.patientCode;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -3950,7 +3930,11 @@ export class CreatePatientDto implements ICreatePatientDto {
         data["phoneNumber"] = this.phoneNumber;
         data["email"] = this.email;
         data["address"] = this.address;
-        data["photoBase64"] = this.photoBase64;
+        if (Array.isArray(this.photosBase64)) {
+            data["photosBase64"] = [];
+            for (let item of this.photosBase64)
+                data["photosBase64"].push(item);
+        }
         return data;
     }
 
@@ -3963,14 +3947,6 @@ export class CreatePatientDto implements ICreatePatientDto {
 }
 
 export interface ICreatePatientDto {
-    id: number;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
     patientCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -3979,7 +3955,7 @@ export interface ICreatePatientDto {
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
-    photoBase64: string | undefined;
+    photosBase64: string[] | undefined;
 }
 
 export class CreateRoleDto implements ICreateRoleDto {
@@ -4710,13 +4686,6 @@ export interface IPatientAdmissionDto {
 
 export class PatientDto implements IPatientDto {
     id: number;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
     patientCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -4725,7 +4694,9 @@ export class PatientDto implements IPatientDto {
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
-    photoBase64: string | undefined;
+    photosBase64: string[] | undefined;
+    imageIds: number[] | undefined;
+    removedPhotoIds: number[] | undefined;
 
     constructor(data?: IPatientDto) {
         if (data) {
@@ -4739,13 +4710,6 @@ export class PatientDto implements IPatientDto {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = _data["creatorUserId"];
-            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = _data["lastModifierUserId"];
-            this.isDeleted = _data["isDeleted"];
-            this.deleterUserId = _data["deleterUserId"];
-            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
             this.patientCode = _data["patientCode"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
@@ -4754,7 +4718,21 @@ export class PatientDto implements IPatientDto {
             this.phoneNumber = _data["phoneNumber"];
             this.email = _data["email"];
             this.address = _data["address"];
-            this.photoBase64 = _data["photoBase64"];
+            if (Array.isArray(_data["photosBase64"])) {
+                this.photosBase64 = [] as any;
+                for (let item of _data["photosBase64"])
+                    this.photosBase64.push(item);
+            }
+            if (Array.isArray(_data["imageIds"])) {
+                this.imageIds = [] as any;
+                for (let item of _data["imageIds"])
+                    this.imageIds.push(item);
+            }
+            if (Array.isArray(_data["removedPhotoIds"])) {
+                this.removedPhotoIds = [] as any;
+                for (let item of _data["removedPhotoIds"])
+                    this.removedPhotoIds.push(item);
+            }
         }
     }
 
@@ -4768,13 +4746,6 @@ export class PatientDto implements IPatientDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
         data["patientCode"] = this.patientCode;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -4783,7 +4754,21 @@ export class PatientDto implements IPatientDto {
         data["phoneNumber"] = this.phoneNumber;
         data["email"] = this.email;
         data["address"] = this.address;
-        data["photoBase64"] = this.photoBase64;
+        if (Array.isArray(this.photosBase64)) {
+            data["photosBase64"] = [];
+            for (let item of this.photosBase64)
+                data["photosBase64"].push(item);
+        }
+        if (Array.isArray(this.imageIds)) {
+            data["imageIds"] = [];
+            for (let item of this.imageIds)
+                data["imageIds"].push(item);
+        }
+        if (Array.isArray(this.removedPhotoIds)) {
+            data["removedPhotoIds"] = [];
+            for (let item of this.removedPhotoIds)
+                data["removedPhotoIds"].push(item);
+        }
         return data;
     }
 
@@ -4797,13 +4782,6 @@ export class PatientDto implements IPatientDto {
 
 export interface IPatientDto {
     id: number;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
     patientCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -4812,7 +4790,9 @@ export interface IPatientDto {
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
-    photoBase64: string | undefined;
+    photosBase64: string[] | undefined;
+    imageIds: number[] | undefined;
+    removedPhotoIds: number[] | undefined;
 }
 
 export enum PatientEnum {
@@ -5995,13 +5975,6 @@ export interface IUpdatePatientAdmissionDto {
 
 export class UpdatePattientDto implements IUpdatePattientDto {
     id: number;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
     patientCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -6010,7 +5983,9 @@ export class UpdatePattientDto implements IUpdatePattientDto {
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
-    photoBase64: string | undefined;
+    photosBase64: string[] | undefined;
+    imageIds: number[] | undefined;
+    removedPhotoIds: number[] | undefined;
 
     constructor(data?: IUpdatePattientDto) {
         if (data) {
@@ -6024,13 +5999,6 @@ export class UpdatePattientDto implements IUpdatePattientDto {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = _data["creatorUserId"];
-            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = _data["lastModifierUserId"];
-            this.isDeleted = _data["isDeleted"];
-            this.deleterUserId = _data["deleterUserId"];
-            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
             this.patientCode = _data["patientCode"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
@@ -6039,7 +6007,21 @@ export class UpdatePattientDto implements IUpdatePattientDto {
             this.phoneNumber = _data["phoneNumber"];
             this.email = _data["email"];
             this.address = _data["address"];
-            this.photoBase64 = _data["photoBase64"];
+            if (Array.isArray(_data["photosBase64"])) {
+                this.photosBase64 = [] as any;
+                for (let item of _data["photosBase64"])
+                    this.photosBase64.push(item);
+            }
+            if (Array.isArray(_data["imageIds"])) {
+                this.imageIds = [] as any;
+                for (let item of _data["imageIds"])
+                    this.imageIds.push(item);
+            }
+            if (Array.isArray(_data["removedPhotoIds"])) {
+                this.removedPhotoIds = [] as any;
+                for (let item of _data["removedPhotoIds"])
+                    this.removedPhotoIds.push(item);
+            }
         }
     }
 
@@ -6053,13 +6035,6 @@ export class UpdatePattientDto implements IUpdatePattientDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
         data["patientCode"] = this.patientCode;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -6068,7 +6043,21 @@ export class UpdatePattientDto implements IUpdatePattientDto {
         data["phoneNumber"] = this.phoneNumber;
         data["email"] = this.email;
         data["address"] = this.address;
-        data["photoBase64"] = this.photoBase64;
+        if (Array.isArray(this.photosBase64)) {
+            data["photosBase64"] = [];
+            for (let item of this.photosBase64)
+                data["photosBase64"].push(item);
+        }
+        if (Array.isArray(this.imageIds)) {
+            data["imageIds"] = [];
+            for (let item of this.imageIds)
+                data["imageIds"].push(item);
+        }
+        if (Array.isArray(this.removedPhotoIds)) {
+            data["removedPhotoIds"] = [];
+            for (let item of this.removedPhotoIds)
+                data["removedPhotoIds"].push(item);
+        }
         return data;
     }
 
@@ -6082,13 +6071,6 @@ export class UpdatePattientDto implements IUpdatePattientDto {
 
 export interface IUpdatePattientDto {
     id: number;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
     patientCode: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -6097,7 +6079,9 @@ export interface IUpdatePattientDto {
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
-    photoBase64: string | undefined;
+    photosBase64: string[] | undefined;
+    imageIds: number[] | undefined;
+    removedPhotoIds: number[] | undefined;
 }
 
 export class UserDto implements IUserDto {

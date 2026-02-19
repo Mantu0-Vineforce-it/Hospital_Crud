@@ -104,9 +104,13 @@
                   <td>{{ patient.patientCode }}</td>
                   <td>{{ patient.firstName }} {{ patient.lastName }}</td>
                   <td>
-                    <img *ngIf="patient.photoBase64" [src]="'data:image/png;base64,' + patient.photoBase64" width="50"
-                      height="50" class="rounded" />
+                    <ng-container *ngIf="patient.photosBase64 && patient.photosBase64.length > 0">
+                      <img *ngFor="let img of patient.photosBase64" [src]="'data:image/png;base64,' + img" width="50"
+                        height="50" class="rounded mr-1" style="margin-right: 5px;" />
+                    </ng-container>
+                    <span *ngIf="!patient.photosBase64 || patient.photosBase64.length === 0">No Image</span>
                   </td>
+
                   <td>{{ patient.dateOfBirth | date:'shortDate' }}</td>
                   <td>{{ patient.gender }}</td>
                   <td>{{ patient.phoneNumber }}</td>

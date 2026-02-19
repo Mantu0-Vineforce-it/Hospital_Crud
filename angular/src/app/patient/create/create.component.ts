@@ -40,11 +40,18 @@ export class CreatePatientDialogComponent extends AppComponentBase implements On
   saving = false;
   patient: PatientDto = new PatientDto();
   genderOptions: string[] = ['Male', 'Female', 'Other'];
-  selectedFile: File | null = null;
-  photoPreview: string | ArrayBuffer | null = null;
+
+  // Multiple file support
+  selectedFiles: File[] = [];
+  photoPreviews: string[] = [];
 
   // Field-specific backend errors
-  formErrors: { patientCode?: string; email?: string; phoneNumber?: string; general?: string } = {};
+  formErrors: {
+    patientCode?: string;
+    email?: string;
+    phoneNumber?: string;
+    general?: string;
+  } = {};
 
   @Output() onSave = new EventEmitter<any>();
 
@@ -59,21 +66,26 @@ export class CreatePatientDialogComponent extends AppComponentBase implements On
 
   ngOnInit(): void {}
 
-  onFileSelected(event: any) {
+  // Handle multiple file selection
+  onFilesSelected(event: any) {
     if (event.target.files && event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
+      this.selectedFiles = Array.from(event.target.files);
+      this.photoPreviews = [];
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.photoPreview = reader.result;
-      };
-      reader.readAsDataURL(this.selectedFile);
+      this.selectedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.photoPreviews.push(reader.result as string);
+          this.cd.detectChanges();
+        };
+        reader.readAsDataURL(file);
+      });
     }
   }
 
   save(): void {
     this.saving = true;
-    this.formErrors = {}; // reset errors
+    this.formErrors = {};
 
     const dto = new CreatePatientDto();
     dto.patientCode = this.patient.patientCode;
@@ -85,24 +97,42 @@ export class CreatePatientDialogComponent extends AppComponentBase implements On
     dto.email = this.patient.email;
     dto.address = this.patient.address;
 
-    if (this.selectedFile) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        dto.photoBase64 = (reader.result as string).split(',')[1];
-        this.sendPatient(dto);
-      };
-      reader.readAsDataURL(this.selectedFile);
+    if (this.selectedFiles.length > 0) {
+      // Convert all selected files to Base64
+      const readers = this.selectedFiles.map(
+        (file) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve((reader.result as string).split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          })
+      );
+
+      Promise.all(readers)
+        .then((base64Arr) => {
+          dto.photosBase64 = base64Arr;
+          this.sendPatient(dto);
+        })
+        .catch((err) => {
+          this.saving = false;
+          this.notify.error('Failed to read image files');
+        });
     } else {
       this.sendPatient(dto);
     }
   }
 
-  sendPatient(dto: CreatePatientDto): void {
-    this._patientService.createPatient(dto)
-      .pipe(finalize(() => {
-        this.saving = false;
-        this.cd.detectChanges();
-      }))
+  // Send data to backend
+  private sendPatient(dto: CreatePatientDto): void {
+    this._patientService
+      .createPatient(dto)
+      .pipe(
+        finalize(() => {
+          this.saving = false;
+          this.cd.detectChanges();
+        })
+      )
       .subscribe({
         next: () => {
           this.notify.info(this.l('SavedSuccessfully'));
@@ -110,22 +140,14 @@ export class CreatePatientDialogComponent extends AppComponentBase implements On
           this.onSave.emit(null);
         },
         error: (err) => {
-          this.formErrors = {}; // reset errors
+          this.formErrors = {};
 
-          // Map backend validation errors
           if (err?.error?.details) {
-            if (err.error.details.PatientCode) {
-              this.formErrors.patientCode = err.error.details.PatientCode[0];
-            }
-            if (err.error.details.Email) {
-              this.formErrors.email = err.error.details.Email[0];
-            }
-            if (err.error.details.PhoneNumber) {
-              this.formErrors.phoneNumber = err.error.details.PhoneNumber[0];
-            }
+            if (err.error.details.PatientCode) this.formErrors.patientCode = err.error.details.PatientCode[0];
+            if (err.error.details.Email) this.formErrors.email = err.error.details.Email[0];
+            if (err.error.details.PhoneNumber) this.formErrors.phoneNumber = err.error.details.PhoneNumber[0];
           }
 
-          // Fallback for general messages
           if (!this.formErrors.patientCode && err.error?.message?.toLowerCase().includes('patient code')) {
             this.formErrors.patientCode = err.error.message;
           }

@@ -8,6 +8,7 @@ using UserCrud.Docters;
 using UserCrud.Beds;
 using UserCrud.Rooms;
 using UserCrud.PatientAdmission;
+using UserCrud.PatientImages;
 
 namespace UserCrud.EntityFrameworkCore;
 
@@ -24,4 +25,5 @@ public class UserCrudDbContext : AbpZeroDbContext<Tenant, Role, User, UserCrudDb
     public DbSet<room> rooms { get; set; }
     public DbSet<bed> beds { get; set; }
     public DbSet<patientAdmission> patientAdmissions { get; set; }
+    public DbSet<patienttImages> patienttImages { get; set; }
 }

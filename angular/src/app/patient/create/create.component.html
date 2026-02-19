@@ -11,7 +11,7 @@
       <label class="col-md-3 col-form-label" for="patientCode">{{ 'PatientCode' | localize }}</label>
       <div class="col-md-9">
         <input type="text" class="form-control" name="patientCode" id="patientCode" required
-               [(ngModel)]="patient.patientCode" #codeModel="ngModel" #codeEl />
+          [(ngModel)]="patient.patientCode" #codeModel="ngModel" #codeEl />
 
         <small class="text-danger" *ngIf="codeModel.touched && codeModel.invalid">
           <span *ngIf="codeModel.errors?.required">Patient Code is required</span>
@@ -29,8 +29,8 @@
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="firstName">{{ 'FirstName' | localize }}</label>
       <div class="col-md-9">
-        <input type="text" class="form-control" name="firstName" id="firstName" required minlength="2"
-               maxlength="50" [(ngModel)]="patient.firstName" #firstNameModel="ngModel" #firstNameEl />
+        <input type="text" class="form-control" name="firstName" id="firstName" required minlength="2" maxlength="50"
+          [(ngModel)]="patient.firstName" #firstNameModel="ngModel" #firstNameEl />
 
         <small class="text-danger" *ngIf="firstNameModel.touched && firstNameModel.invalid">
           <span *ngIf="firstNameModel.errors?.required">First Name is required</span>
@@ -46,8 +46,8 @@
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="lastName">{{ 'LastName' | localize }}</label>
       <div class="col-md-9">
-        <input type="text" class="form-control" name="lastName" id="lastName" required minlength="2"
-               maxlength="50" [(ngModel)]="patient.lastName" #lastNameModel="ngModel" #lastNameEl />
+        <input type="text" class="form-control" name="lastName" id="lastName" required minlength="2" maxlength="50"
+          [(ngModel)]="patient.lastName" #lastNameModel="ngModel" #lastNameEl />
 
         <small class="text-danger" *ngIf="lastNameModel.touched && lastNameModel.invalid">
           <span *ngIf="lastNameModel.errors?.required">Last Name is required</span>
@@ -63,17 +63,22 @@
     <div class="form-group row">
       <label class="col-md-3 col-form-label" for="photo">{{ 'Photo' | localize }}</label>
       <div class="col-md-9">
-        <input type="file" class="form-control" (change)="onFileSelected($event)" />
-        <img *ngIf="photoPreview" [src]="photoPreview" width="100" height="100" class="mt-2 rounded" />
+        <input type="file" class="form-control" (change)="onFilesSelected($event)" multiple />
+
+        <div class="mt-2 d-flex flex-wrap">
+          <img *ngFor="let preview of photoPreviews" [src]="preview" width="100" height="100"
+            class="rounded mr-2 mb-2" />
+        </div>
       </div>
     </div>
+
 
     <!-- Date of Birth -->
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="dateOfBirth">{{ 'DateOfBirth' | localize }}</label>
       <div class="col-md-9">
         <input type="date" class="form-control" name="dateOfBirth" id="dateOfBirth" required
-               [(ngModel)]="patient.dateOfBirth" #dobModel="ngModel" #dobEl />
+          [(ngModel)]="patient.dateOfBirth" #dobModel="ngModel" #dobEl />
 
         <small class="text-danger" *ngIf="dobModel.touched && dobModel.invalid">
           <span *ngIf="dobModel.errors?.required">Date of Birth is required</span>
@@ -88,7 +93,7 @@
       <label class="col-md-3 col-form-label" for="gender">{{ 'Gender' | localize }}</label>
       <div class="col-md-9">
         <select class="form-control" name="gender" id="gender" required [(ngModel)]="patient.gender"
-                #genderModel="ngModel" #genderEl>
+          #genderModel="ngModel" #genderEl>
           <option *ngFor="let g of genderOptions" [value]="g">{{ g }}</option>
         </select>
 
@@ -100,8 +105,8 @@
     <div class="form-group row">
       <label class="col-md-3 col-form-label" for="phoneNumber">{{ 'PhoneNumber' | localize }}</label>
       <div class="col-md-9">
-        <input type="text" class="form-control" name="phoneNumber" id="phoneNumber"
-               [(ngModel)]="patient.phoneNumber" #phoneModel="ngModel" #phoneEl />
+        <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" [(ngModel)]="patient.phoneNumber"
+          #phoneModel="ngModel" #phoneEl />
 
         <abp-validation-summary [control]="phoneModel" [controlEl]="phoneEl"></abp-validation-summary>
         <small class="text-danger" *ngIf="formErrors.phoneNumber">{{ formErrors.phoneNumber }}</small>
@@ -113,7 +118,7 @@
       <label class="col-md-3 col-form-label" for="email">{{ 'Email' | localize }}</label>
       <div class="col-md-9">
         <input type="email" class="form-control" name="email" id="email" required [(ngModel)]="patient.email"
-               #emailModel="ngModel" #emailEl />
+          #emailModel="ngModel" #emailEl />
 
         <small class="text-danger" *ngIf="emailModel.touched && emailModel.invalid">
           <span *ngIf="emailModel.errors?.required">Email is required</span>
@@ -129,8 +134,8 @@
     <div class="form-group row">
       <label class="col-md-3 col-form-label" for="address">{{ 'Address' | localize }}</label>
       <div class="col-md-9">
-        <textarea class="form-control" name="address" id="address" rows="3"
-                  [(ngModel)]="patient.address" #addressModel="ngModel" #addressEl></textarea>
+        <textarea class="form-control" name="address" id="address" rows="3" [(ngModel)]="patient.address"
+          #addressModel="ngModel" #addressEl></textarea>
 
         <abp-validation-summary [control]="addressModel" [controlEl]="addressEl"></abp-validation-summary>
       </div>
@@ -145,7 +150,7 @@
 
   <!-- Modal Footer -->
   <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createPatientForm.form.valid || saving"
-                    (onCancelClick)="bsModalRef.hide()">
+    (onCancelClick)="bsModalRef.hide()">
   </abp-modal-footer>
 
 </form>

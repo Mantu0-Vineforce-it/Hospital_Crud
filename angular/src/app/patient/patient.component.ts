@@ -23,9 +23,6 @@ import { CreatePatientDialogComponent } from './create/create.component';
  imports: [FormsModule, TableModule, PrimeTemplate, PaginatorModule, LocalizePipe,CommonModule]
 })
 export class PatientComponent extends PagedListingComponentBase<PatientDto> {
-getStudents() {
-throw new Error('Method not implemented.');
-}
 
   @ViewChild('dataTable', { static: true }) dataTable: Table;
   @ViewChild('paginator', { static: true }) paginator: Paginator;
@@ -71,26 +68,28 @@ throw new Error('Method not implemented.');
       });
   }
 
- createPatient(): void {
-    const modalRef = this._modalService.show(CreatePatientDialogComponent, {
-      class: 'modal-lg',
-    });
-
-    modalRef.content.onSave.subscribe(() => this.refresh());
-  }
-
- editPatient(patient: PatientDto): void {
-  const modalRef = this._modalService.show(EditPatientDialogComponent, {
+createPatient(): void {
+  const modalRef = this._modalService.show(CreatePatientDialogComponent, {
     class: 'modal-lg',
-    initialState: {
-      patient: patient  // ✅ use parameter
-    }
   });
 
-  modalRef.content.onSave.subscribe(() => {
-    this.refresh();
-  });
+  modalRef.content.onSave.subscribe(() => this.refresh());
 }
+
+editPatient(patient: PatientDto): void {
+
+  this._patientService.getPatientById(patient.id)
+    .subscribe((freshPatient) => {
+
+      const modalRef = this._modalService.show(EditPatientDialogComponent, {
+        class: 'modal-lg',
+        initialState: { patient: freshPatient }
+      });
+
+      modalRef.content.onSave.subscribe(() => this.refresh());
+    });
+}
+
 
   delete(patient: PatientDto): void {
     abp.message.confirm(
