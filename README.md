@@ -54,4 +54,5 @@ It supports CRUD (Create, Read, Update, Delete) operations for all major hospita
 ![image alt]( https://github.com/Mantu0-Vineforce-it/Hospital_Crud/blob/c83bfed16e3198e01e57b272a82d9cce8545ddb2/Screenshot%202026-02-03%20143455.png  )
 ![image alt]( https://github.com/Mantu0-Vineforce-it/Hospital_Crud/blob/c83bfed16e3198e01e57b272a82d9cce8545ddb2/Screenshot%202026-02-03%20143606.png )
 ![image alt]( https://github.com/Mantu0-Vineforce-it/Hospital_Crud/blob/649d8af2ddee431cf5291435833a13b83b5c4f6e/Screenshot%202026-02-04%20164348.png)
+![image alt]( https://github.com/Mantu0-Vineforce-it/Hospital_Crud/blob/3d14efe113cef30f9a630b4107eed637ec802c5a/Screenshot%202026-02-19%20123828.png)
   
