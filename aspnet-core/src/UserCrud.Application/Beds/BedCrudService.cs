@@ -2,6 +2,7 @@
 using Abp.Domain.Repositories;
 using Abp.Runtime.Validation;
 using Abp.UI;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,7 +28,9 @@ namespace UserCrud.Beds
         // ===================== GET ALL =====================
         public async Task<List<BedDto>> GetAllBedsAsync()
         {
-            var beds = await _bedRepository.GetAllListAsync();
+            var beds = await _bedRepository
+                .GetAllIncluding(b => b.Room)
+                .ToListAsync();
 
             return beds.Select(b => new BedDto
             {
@@ -35,11 +38,14 @@ namespace UserCrud.Beds
                 BedNumber = b.BedNumber,
                 IsOccupied = b.IsOccupied,
                 RoomId = b.RoomId,
-                Room = b.Room != null ? new RoomDto
+                Room = b.Room == null ? null : new RoomDto
                 {
                     Id = b.Room.Id,
-                    RoomType = b.Room.RoomType
-                } : null
+                    RoomType = b.Room.RoomType,
+                    RoomNumber = b.Room.RoomNumber,
+                    TotalBeds = b.Room.TotalBeds,
+                    IsActive = b.Room.IsActive
+                }
             }).ToList();
         }
 

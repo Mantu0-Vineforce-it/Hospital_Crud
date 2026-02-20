@@ -16,7 +16,6 @@ namespace UserCrud.Beds.Dto
         public bool IsOccupied { get; set; }
         public long RoomId { get; set; }
 
-
         [ForeignKey("RoomId")]
         public RoomDto Room { get; set; }
     }

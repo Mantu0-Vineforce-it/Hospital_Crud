@@ -13,6 +13,7 @@ namespace UserCrud.Rooms.Dto
 
         public string RoomNumber { get; set; }
         public RoomEnum RoomType { get; set; }
+        public string RoomTypeName => RoomType.ToString();
         public int TotalBeds { get; set; }
         public bool IsActive { get; set; }
     }

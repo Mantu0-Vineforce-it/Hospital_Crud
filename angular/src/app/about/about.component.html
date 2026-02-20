@@ -8,115 +8,104 @@
             </div>
         </div>
     </section>
+
     <section class="content px-2">
         <div class="container-fluid">
             <div class="card">
                 <div class="card-body">
+
                     <p>
-                        This is a simple startup template based on ASP.NET Boilerplate framework and Module Zero. If you
-                        need an enterprise startup project, check
-                        <a href="http://aspnetzero.com?ref=abptmpl" target="_blank">ASP.NET ZERO</a>
-                        .
+                        This is a Hospital Management System built using the 
+                        <strong>ASP.NET Boilerplate (ABP)</strong> framework and 
+                        <strong>Angular</strong>. It is designed to provide a structured,
+                        scalable and maintainable solution for managing hospital operations.
                     </p>
-                    <h3>What is ASP.NET Boilerplate?</h3>
+
+                    <h3>What is this Hospital Management System?</h3>
                     <p>
-                        ASP.NET Boilerplate is an application framework built on latest
-                        <strong>ASP.NET Core</strong>
-                        framework. It makes easy to use authorization, dependency injection, validation, exception
-                        handling, localization, logging, caching, background jobs and so on. It's built on already
-                        familiar tools like Entity Framework, AutoMapper, Castle Windsor...
-                    </p>
-                    <p>
-                        ASP.NET Boilerplate implements
-                        <strong>NLayer architecture</strong>
-                        (Domain, Application, Infrastructure and Presentation Layers) and
-                        <strong>Domain Driven Design</strong>
-                        (Entities, Repositories, Domain/Application Services, DTO's...). Also implements and provides a
-                        good infrastructure to implement common software development
-                        <strong>best practices</strong>
-                        .
-                    </p>
-                    <h3>What is Module Zero?</h3>
-                    <p>
-                        ASP.NET Boilerplate framework is designed to be independent of any database schema and to be as
-                        generic as possible. Therefore, It leaves some concepts
-                        <strong>abstract</strong>
-                        and
-                        <strong>optional</strong>
-                        (like audit logging, permission and setting stores) which requires some
-                        <strong>data store</strong>
-                        .
+                        The Hospital Management System is an enterprise-style web application
+                        that helps manage doctors, patients, admissions, rooms and beds
+                        in an organized manner.
                     </p>
                     <p>
-                        <strong>Module Zero</strong>
-                        implements all fundamental concepts of ASP.NET Boilerplate framework such as
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Zero/Tenant-Management">
-                            tenant management
-                        </a>
-                        (
-                        <strong>multi-tenancy</strong>
-                        ),
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Zero/Role-Management">
-                            role management
-                        </a>
-                        ,
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Zero/User-Management">
-                            user management
-                        </a>
-                        ,
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Authorization">authorization</a>
-                        (
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Zero/Permission-Management">
-                            permission management
-                        </a>
-                        ),
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Setting-Management">
-                            setting management
-                        </a>
-                        ,
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Zero/Language-Management">
-                            language management
-                        </a>
-                        ,
-                        <a href="http://www.aspnetboilerplate.com/Pages/Documents/Audit-Logging">audit logging</a>
-                        and so on.
+                        It simplifies administrative tasks such as patient registration,
+                        room allocation, bed occupancy tracking and doctor management.
+                        The system ensures proper data organization using modern 
+                        software development practices.
                     </p>
+
+                    <h3>Core Modules</h3>
                     <p>
-                        Module-Zero defines entities and implements
-                        <strong>domain logic</strong>
-                        (domain layer) and leaves application and presentation layers to you.
+                        The system implements several core modules:
                     </p>
-                    <h4>Based on Microsoft ASP.NET Core Identity</h4>
-                    <p>
-                        Module Zero is based on Microsoft's
-                        <a
-                            href="https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity"
-                            target="_blank">
-                            ASP.NET Core Identity
-                        </a>
-                        library. It extends user and role managers and implements user and role stores using generic
-                        repositories.
-                    </p>
-                    <h3>Documentation</h3>
                     <ul>
                         <li>
-                            <a href="https://www.aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core">
-                                Documentation for this template
-                            </a>
+                            <strong>Doctor Management</strong> – Manage doctor details,
+                            specialization and availability.
                         </li>
                         <li>
-                            <a href="http://www.aspnetboilerplate.com/Pages/Documents">
-                                ASP.NET Boilerplate documentation
-                            </a>
+                            <strong>Patient Management</strong> – Register and maintain
+                            patient personal and medical information.
+                        </li>
+                        <li>
+                            <strong>Patient Admission</strong> – Handle admission,
+                            diagnosis, doctor assignment and discharge.
+                        </li>
+                        <li>
+                            <strong>Room Management</strong> – Maintain different room
+                            categories such as ICU, General and Private.
+                        </li>
+                        <li>
+                            <strong>Bed Management</strong> – Monitor bed availability
+                            and occupancy status in real time.
                         </li>
                     </ul>
-                    <h3>Source code</h3>
+
+                    <h3>Architecture</h3>
                     <p>
-                        This template is developed open source on Github. You can contribute to the template.
-                        <a href="https://github.com/aspnetboilerplate/module-zero-core-template" target="_blank">
-                            https://github.com/aspnetboilerplate/module-zero-core-template
-                        </a>
+                        This project follows a clean <strong>N-Layer Architecture</strong>:
                     </p>
+                    <ul>
+                        <li><strong>Domain Layer</strong> – Entities and business logic.</li>
+                        <li><strong>Application Layer</strong> – Application services and DTOs.</li>
+                        <li><strong>Infrastructure Layer</strong> – Repository and database operations.</li>
+                        <li><strong>Presentation Layer</strong> – Angular-based user interface.</li>
+                    </ul>
+
+                    <p>
+                        The system also follows <strong>Domain Driven Design (DDD)</strong> principles,
+                        ensuring separation of concerns and maintainability.
+                    </p>
+
+                    <h3>Technologies Used</h3>
+                    <p>
+                        The application is built using modern technologies including:
+                    </p>
+                    <ul>
+                        <li>ASP.NET Core</li>
+                        <li>ASP.NET Boilerplate (ABP)</li>
+                        <li>Angular</li>
+                        <li>Entity Framework Core</li>
+                        <li>SignalR</li>
+                        <li>SQL Server</li>
+                    </ul>
+
+                    <h3>Purpose of the Project</h3>
+                    <p>
+                        The purpose of this project is to demonstrate a real-world 
+                        enterprise application structure using ABP framework,
+                        including CRUD operations, DTO mapping, repository pattern,
+                        enum management and dynamic dashboards.
+                    </p>
+
+                    <h3>Future Improvements</h3>
+                    <ul>
+                        <li>Appointment Scheduling</li>
+                        <li>Billing and Payment Integration</li>
+                        <li>Advanced Reporting & Analytics</li>
+                        <li>Inventory & Pharmacy Management</li>
+                    </ul>
+
                 </div>
             </div>
         </div>

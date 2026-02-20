@@ -12,6 +12,7 @@ namespace UserCrud.Patients.Dto
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public PatientEnum Gender { get; set; }
+        public string GenderName => Gender.ToString();
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }

@@ -4171,6 +4171,7 @@ export class DocterDto implements IDocterDto {
     docterCode: string | undefined;
     fullName: string | undefined;
     specialization: DoctorSpecializationEnum;
+    readonly specializationName: string | undefined;
     qualification: string | undefined;
     phoneNumber: string | undefined;
     email: string | undefined;
@@ -4198,6 +4199,7 @@ export class DocterDto implements IDocterDto {
             this.docterCode = _data["docterCode"];
             this.fullName = _data["fullName"];
             this.specialization = _data["specialization"];
+            (<any>this).specializationName = _data["specializationName"];
             this.qualification = _data["qualification"];
             this.phoneNumber = _data["phoneNumber"];
             this.email = _data["email"];
@@ -4225,6 +4227,7 @@ export class DocterDto implements IDocterDto {
         data["docterCode"] = this.docterCode;
         data["fullName"] = this.fullName;
         data["specialization"] = this.specialization;
+        data["specializationName"] = this.specializationName;
         data["qualification"] = this.qualification;
         data["phoneNumber"] = this.phoneNumber;
         data["email"] = this.email;
@@ -4252,6 +4255,7 @@ export interface IDocterDto {
     docterCode: string | undefined;
     fullName: string | undefined;
     specialization: DoctorSpecializationEnum;
+    specializationName: string | undefined;
     qualification: string | undefined;
     phoneNumber: string | undefined;
     email: string | undefined;
@@ -4691,6 +4695,7 @@ export class PatientDto implements IPatientDto {
     lastName: string | undefined;
     dateOfBirth: moment.Moment;
     gender: PatientEnum;
+    readonly genderName: string | undefined;
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
@@ -4715,6 +4720,7 @@ export class PatientDto implements IPatientDto {
             this.lastName = _data["lastName"];
             this.dateOfBirth = _data["dateOfBirth"] ? moment(_data["dateOfBirth"].toString()) : <any>undefined;
             this.gender = _data["gender"];
+            (<any>this).genderName = _data["genderName"];
             this.phoneNumber = _data["phoneNumber"];
             this.email = _data["email"];
             this.address = _data["address"];
@@ -4751,6 +4757,7 @@ export class PatientDto implements IPatientDto {
         data["lastName"] = this.lastName;
         data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
         data["gender"] = this.gender;
+        data["genderName"] = this.genderName;
         data["phoneNumber"] = this.phoneNumber;
         data["email"] = this.email;
         data["address"] = this.address;
@@ -4787,6 +4794,7 @@ export interface IPatientDto {
     lastName: string | undefined;
     dateOfBirth: moment.Moment;
     gender: PatientEnum;
+    genderName: string | undefined;
     phoneNumber: string | undefined;
     email: string | undefined;
     address: string | undefined;
@@ -5425,6 +5433,7 @@ export class RoomDto implements IRoomDto {
     deletionTime: moment.Moment | undefined;
     roomNumber: string | undefined;
     roomType: RoomEnum;
+    readonly roomTypeName: string | undefined;
     totalBeds: number;
     isActive: boolean;
 
@@ -5449,6 +5458,7 @@ export class RoomDto implements IRoomDto {
             this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
             this.roomNumber = _data["roomNumber"];
             this.roomType = _data["roomType"];
+            (<any>this).roomTypeName = _data["roomTypeName"];
             this.totalBeds = _data["totalBeds"];
             this.isActive = _data["isActive"];
         }
@@ -5473,6 +5483,7 @@ export class RoomDto implements IRoomDto {
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
         data["roomNumber"] = this.roomNumber;
         data["roomType"] = this.roomType;
+        data["roomTypeName"] = this.roomTypeName;
         data["totalBeds"] = this.totalBeds;
         data["isActive"] = this.isActive;
         return data;
@@ -5497,6 +5508,7 @@ export interface IRoomDto {
     deletionTime: moment.Moment | undefined;
     roomNumber: string | undefined;
     roomType: RoomEnum;
+    roomTypeName: string | undefined;
     totalBeds: number;
     isActive: boolean;
 }
