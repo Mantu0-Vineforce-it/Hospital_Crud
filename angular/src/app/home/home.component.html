@@ -58,7 +58,7 @@
 
             <!-- Beds -->
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-primary" style="cursor:pointer" (click)="selectedSection='beds'">
+                <div class="small-box bg-primary" style="cursor:pointer" (click)="selectedSection='availableBeds'">
                     <div class="inner">
                         <h3>{{ availableBeds }}</h3>
                         <p>Available Beds</p>
@@ -214,6 +214,25 @@
                                 </tr>
                             </tbody>
                         </table>
+
+                        <!-- Available Beds Table -->
+                        <table *ngIf="selectedSection==='availableBeds'" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Bed Number</th>
+                                    <th>Room</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let b of availableBedsList">
+                                    <td>{{ b.bedNumber }}</td>
+                                    <td>{{ b.room?.roomNumber }}</td>
+                                    <td class="text-success">Available</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
 
                         <!-- Beds Table -->
                         <table *ngIf="selectedSection==='beds'" class="table table-bordered table-hover">

@@ -53,7 +53,7 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th pSortableColumn="name">
-                                        {{ 'RoomName' | localize }}
+                                        {{ 'RoomNumber' | localize }}
                                         <p-sortIcon field="name"></p-sortIcon>
                                     </th>
 
@@ -82,7 +82,7 @@
                             <ng-template pTemplate="body" let-room>
                                 <tr>
                                     <td>{{ room.roomNumber}}</td>
-                                    <td>{{ room.roomType}}</td> <!-- If enum, you might want a pipe to show text -->
+                                    <td>{{ room.roomTypeName}}</td> <!-- If enum, you might want a pipe to show text -->
                                     <td>{{ room.totalBeds}}</td>
                                     <td>
                                         <span [ngClass]="room.isActive ? 'text-success' : 'text-danger'">

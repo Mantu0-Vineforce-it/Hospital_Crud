@@ -19,7 +19,6 @@ import { LocalizePipe } from '../../../shared/pipes/localize.pipe';
     FormsModule,
     AbpModalHeaderComponent,
     AbpModalFooterComponent,
-    AbpValidationSummaryComponent,
     LocalizePipe,
   ],
 })

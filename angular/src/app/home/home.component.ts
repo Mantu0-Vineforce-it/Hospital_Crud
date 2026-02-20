@@ -49,6 +49,8 @@ export class HomeComponent extends AppComponentBase implements OnInit {
     rooms: RoomDto[] = [];
     beds: BedDto[] = [];
     occupiedBeds: BedDto[] = [];
+    availableBedsList: BedDto[] = [];
+
 
     // 🟢 Selected Section (for click behavior)
     selectedSection: string | null = null;
@@ -99,28 +101,29 @@ export class HomeComponent extends AppComponentBase implements OnInit {
             this.cdr.markForCheck();
         });
 
-       this.bedService.getAllBeds().subscribe(res => {
-    this.beds = res || [];
-    this.totalBeds = this.beds.length;
+        this.bedService.getAllBeds().subscribe(res => {
+            this.beds = res || [];
+            this.totalBeds = this.beds.length;
 
-    this.availableBeds = this.beds.filter(b => !b.isOccupied).length;
+            this.availableBedsList = this.beds.filter(b => !b.isOccupied);
+            this.availableBeds = this.availableBedsList.length;
 
-    // NEW: occupied beds list
-    this.occupiedBeds = this.beds.filter(b => b.isOccupied);
+            // NEW: occupied beds list
+            this.occupiedBeds = this.beds.filter(b => b.isOccupied);
 
-    this.cdr.markForCheck();
-});
+            this.cdr.markForCheck();
+        });
 
     }
 
-   showSection(section: string): void {
-    this.selectedSection = section;
-    this.cdr.markForCheck();
-}
+    showSection(section: string): void {
+        this.selectedSection = section;
+        this.cdr.markForCheck();
+    }
 
-closeDetails(): void {
-    this.selectedSection = null;
-    this.cdr.markForCheck();
-}
+    closeDetails(): void {
+        this.selectedSection = null;
+        this.cdr.markForCheck();
+    }
 
 }
